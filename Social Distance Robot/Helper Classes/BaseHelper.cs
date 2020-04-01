@@ -289,7 +289,7 @@ namespace robot_head
         }
         static public void CancelNavigation()
         {
-            rBase.Stop();
+            //rBase.Stop();
             rBase.CancelNavigation();
         }
         static public void Go(string location)
@@ -300,14 +300,24 @@ namespace robot_head
 
                 rBase.Go(location);
             }
-            catch { }
+            catch {
+                GlobalFlowControl.Navigation.Reset();
+            }
         }
 
         static public void GoUntilReachedGoalOrCanceled(string location)
         {
-            Go(location);
+            try
+            {
+                Go(location);
+
+                while (GlobalFlowControl.Navigation.Moving == true) ;
+            }
+            catch (Exception)
+            {
+
+            }
             
-            while (GlobalFlowControl.Navigation.Moving == true) ;
         }
 
         private static void RBase_NavigationStatusChanged(object o, NavigationStatusEventArgs e)

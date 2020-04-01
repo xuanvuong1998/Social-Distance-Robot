@@ -4,6 +4,7 @@ using robot_head.scheduler;
 using System;
 using System.Configuration;
 using ConfManager = System.Configuration.ConfigurationManager;
+using SpeechLibrary;
 
 namespace robot_head
 { 
@@ -180,8 +181,8 @@ namespace robot_head
 
         private void InterpretText(string text)
         {
-            
-            SpeechGeneration.SpeakAsync(text);
+            Synthesizer.Speak(text);
+            //SpeechGeneration.SpeakAsync(text);
             //SpeechGeneration.SpeakInBody(text); 
      
         }

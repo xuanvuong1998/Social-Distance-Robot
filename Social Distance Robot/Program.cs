@@ -15,19 +15,14 @@ namespace robot_head
         [STAThread]
         static void Main()
         {
-
-           
-            SocialDistanceChecker.StartChecking(); return;
-
+                
+            //SocialDistanceChecker.StartChecking(); return;
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MainForm());
         }
 
-        private static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
-        {
-            //Debug.WriteLine("VESSI");
-        }
+       
     }
 }

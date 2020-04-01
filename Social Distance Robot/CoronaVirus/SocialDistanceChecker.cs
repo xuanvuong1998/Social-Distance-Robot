@@ -101,11 +101,14 @@ namespace robot_head
         }
         public static void StartChecking()
         {
-            KeepReadingData();
+            Roving.Start();
+
+            ThreadHelper.StartNewThread(new Action(() => KeepReadingData()));
         }
 
         private static void ProcessData(string mess)
         {
+            BaseHelper.CancelNavigation();
             Thread thread = new Thread(new ThreadStart(() =>
             {
                 WarningTarget();
@@ -142,8 +145,8 @@ namespace robot_head
 
             Synthesizer.SelectVoiceByName("IVONA 2 Brian OEM");
 
-            Synthesizer.Speak("Please keep your distance more than 1 meter");
-            Synthesizer.Speak("Again, please keep your distance more than 1 meter");
+            Synthesizer.Speak("Please practice social distancing! At least 1 meter apart");
+            Synthesizer.Speak("Again, at least 1 meter apart please");
 
             Wait(4000);
 

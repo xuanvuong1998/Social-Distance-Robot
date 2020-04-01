@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 using Robot;
+using SpeechLibrary;
 using Timer = System.Timers.Timer;
 
 namespace robot_head
@@ -38,9 +39,10 @@ namespace robot_head
         private void MainForm_Load(object sender, EventArgs e)
         {
             DisplayWebFace();            
-            RobotFaceBrowser.ChooseRobotIDAutoimatically();
-            SpeechGeneration.SetUp(System.Speech.Synthesis.VoiceGender.Female, System.Speech.Synthesis.VoiceAge.Child);
-            InitUI();            
+            //RobotFaceBrowser.ChooseRobotIDAutoimatically();
+            //SpeechGeneration.SetUp(System.Speech.Synthesis.VoiceGender.Female, System.Speech.Synthesis.VoiceAge.Child);
+            InitUI();
+            InitSpeech();
             //ChatModule.Init();
             //LoadAnnc();
 
@@ -51,7 +53,13 @@ namespace robot_head
 
             BaseHelper.Connect();
 
+            SocialDistanceChecker.StartChecking();
             //FollowingPerson.ReadChanges();
+        }
+
+        private void InitSpeech()
+        {
+            Synthesizer.SelectVoiceByName(GlobalData.Voice2);
         }
 
         private void InitExcelHelper()

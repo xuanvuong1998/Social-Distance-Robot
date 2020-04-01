@@ -10,6 +10,12 @@ namespace robot_head
 {
     public class GlobalData
     {
+
+        public static readonly string Voice1 = ConfigurationManager.AppSettings["Voice 1"];
+        public static readonly string Voice2 = ConfigurationManager.AppSettings["Voice 2"];
+        public static readonly string Voice3 = ConfigurationManager.AppSettings["Voice 3"];
+
+
         public static readonly string TELEPRESENCE_URL
                 = @"https://scout-ngeeann.firebaseapp.com";
 

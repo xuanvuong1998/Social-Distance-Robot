@@ -135,13 +135,16 @@
     <Compile Include="Commons\GlobalData.cs" />
     <Compile Include="Commons\GlobalFlowControl.cs" />
     <Compile Include="Commons\SpeechGeneration.cs" />
+    <Compile Include="CoronaVirus\Roving.cs" />
     <Compile Include="CoronaVirus\SocialDistanceChecker.cs" />
     <Compile Include="DataModel\AnswerTemplate.cs" />
     <Compile Include="DataModel\SynchronisationData.cs" />
     <Compile Include="FollowingPerson\FollowingPerson.cs" />
     <Compile Include="Helper Classes\AudioHelper.cs" />
     <Compile Include="Helper Classes\BaseHelper.cs" />
+    <Compile Include="Helper Classes\DatabaseHelper.cs" />
     <Compile Include="Helper Classes\ExcelHelper.cs" />
+    <Compile Include="Helper Classes\ThreadHelper.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -182,6 +185,17 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Database\backward.txt" />
+    <Content Include="Database\forward.txt" />
+    <Content Include="Database\RobotLocation.accdb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\RobotPosture.accdb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\RobotSettings.accdb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="dlls\Robot.dll" />
     <Content Include="dlls\SpeechLibrary.dll" />
     <Content Include="media\Alarm1.wav">
