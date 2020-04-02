@@ -28,10 +28,11 @@ namespace robot_head
             {
                 CreateNoWindow = true,
                 UseShellExecute = false,
-                FileName = @"C:\Users\nkk01\AppData\Local\Programs\Python\Python38-32\python.exe",
-                Arguments = @"C:\Users\nkk01\.spyder-py3\temp.py",
+                WorkingDirectory = @"C:\RobotReID\person_re_id-master",
+                FileName = @"C:\ProgramData\Anaconda3\python.exe",
+                Arguments = @"C:\RobotReID\person_re_id-master\my_social_distance.py",
                 RedirectStandardOutput = true,
-                RedirectStandardError = true
+                RedirectStandardError = true 
             };
 
             using (pythonProcess = Process.Start(processInfo))
@@ -84,7 +85,7 @@ namespace robot_head
             return dis < MAX_DISTANCE;
         }
 
-        private static bool CheckDistance(string data)
+        public static bool CheckDistance(string data)
         {
             string[] dectectedPeople = data.Split('%');
 
@@ -121,17 +122,22 @@ namespace robot_head
 
         private static void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
+            string mess = e.Data;
             Console.WriteLine(e.Data);
+
+            if (string.IsNullOrEmpty(mess) || mess.Contains("%") == false) return;
             
-            if (e.Data != null && IsDetected == false)
+            mess = mess.Remove(e.Data.Length - 1); // remove last %
+            
+            if (IsDetected == false)
             {
                 Console.WriteLine("Processing");
-                bool warning = CheckDistance(e.Data);
+                bool warning = CheckDistance(mess);
 
                 if (warning)
                 {
                     IsDetected = true;
-                    ProcessData(e.Data);
+                    ProcessData(mess);
                 }
             }
         }
