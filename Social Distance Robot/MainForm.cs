@@ -16,7 +16,7 @@ namespace robot_head
         
         public void InitUI()
         {
-          //  FormBorderStyle = FormBorderStyle.None;
+            FormBorderStyle = FormBorderStyle.None;
             WindowState = FormWindowState.Maximized;            
             // Top Most : Don't use TopMost property. It will freeze your UI
         }

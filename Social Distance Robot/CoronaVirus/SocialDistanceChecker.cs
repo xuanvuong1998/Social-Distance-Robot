@@ -18,9 +18,11 @@ namespace robot_head
         public static double MinDetectedDistance { get; set; } = 10000000.0;
         private const double CM_PER_PIXEL = 0.3421;
 
-        public const double MAX_DISTANCE = 100; //1 meter
+        public const double MAX_DISTANCE = 120; //1 meter
 
         private static Process pythonProcess;
+
+        private static FrmWarning frmWarning = new FrmWarning();
 
         private static void KeepReadingData()
         {
@@ -28,10 +30,11 @@ namespace robot_head
             {
                 CreateNoWindow = true,
                 UseShellExecute = false,
-                FileName = @"C:\Users\nkk01\AppData\Local\Programs\Python\Python38-32\python.exe",
-                Arguments = @"C:\Users\nkk01\.spyder-py3\temp.py",
+                WorkingDirectory = @"C:\RobotReID\person_re_id-master",
+                FileName = @"C:\ProgramData\Anaconda3\python.exe",
+                Arguments = @"C:\RobotReID\person_re_id-master\my_social_distance.py",
                 RedirectStandardOutput = true,
-                RedirectStandardError = true
+                RedirectStandardError = true 
             };
 
             using (pythonProcess = Process.Start(processInfo))
@@ -66,6 +69,11 @@ namespace robot_head
             double x2 = GetX(p2) * CM_PER_PIXEL;
             double d2 = GetD(p2) * 100;
 
+            if (d1 == 0 || d2 == 0) return false;
+
+            //if (d1 == 0) d1 = 120; // strange issue, sometimes received 0 data from python 
+            //if (d2 == 0) d2 = 120; // 
+
             MinDetectedDistance = Math.Min(MinDetectedDistance, Math.Min(d1, d2));
 
             if (d1 > d2)
@@ -84,7 +92,7 @@ namespace robot_head
             return dis < MAX_DISTANCE;
         }
 
-        private static bool CheckDistance(string data)
+        public static bool CheckDistance(string data)
         {
             string[] dectectedPeople = data.Split('%');
 
@@ -113,25 +121,42 @@ namespace robot_head
             Thread thread = new Thread(new ThreadStart(() =>
             {
                 WarningTarget();
-                
             }));
 
             thread.Start();
+
+            frmWarning.ShowDialog();
+        }
+
+        private static bool IsNotValidData(string mess)
+        {
+            if (string.IsNullOrEmpty(mess) 
+                || mess.Contains("%") == false
+                || mess.Contains("0.0")) return false;
+
+            return true;
+            
         }
 
         private static void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
-            Console.WriteLine(e.Data);
+            string mess = e.Data;
+
+            Console.WriteLine(mess);
+
+            if (IsNotValidData(mess) == false) return;
             
-            if (e.Data != null && IsDetected == false)
+            mess = mess.Remove(e.Data.Length - 1); // remove last %
+            
+            if (IsDetected == false)
             {
                 Console.WriteLine("Processing");
-                bool warning = CheckDistance(e.Data);
+                bool warning = CheckDistance(mess);
 
                 if (warning)
                 {
                     IsDetected = true;
-                    ProcessData(e.Data);
+                    ProcessData(mess);
                 }
             }
         }
@@ -142,13 +167,14 @@ namespace robot_head
         }
         private static void WarningTarget()
         {
+            
             AudioHelper.PlayAlarmSound();
 
             Synthesizer.Speak("Please practice social distancing! At least 1 meter apart");
             Synthesizer.Speak("Again, at least 1 meter apart please");
 
-            Wait(4000);
-
+            Wait(1000 * 2);
+            
             IsDetected = false;
         }
     }

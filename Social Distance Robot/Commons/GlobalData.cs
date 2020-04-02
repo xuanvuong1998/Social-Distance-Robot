@@ -27,7 +27,7 @@ namespace robot_head
 
         public static readonly string RobotName = ConfigurationManager.AppSettings["RobotName"];
         
-        public static readonly string ROS_IP = "192.168.1.11:9090";
-       
+        public static readonly string ROS_IP = ConfigurationManager.AppSettings["BASE_IP_ADDRESS"];
+
     }
 }

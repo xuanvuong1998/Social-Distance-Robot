@@ -15,7 +15,8 @@ namespace robot_head
         [STAThread]
         static void Main()
         {
-                
+
+            
             //SocialDistanceChecker.StartChecking(); return;
 
             Application.EnableVisualStyles();
