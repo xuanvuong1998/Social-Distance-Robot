@@ -24,7 +24,7 @@ namespace robot_head
                         curLocationIndex = (curLocationIndex + 1) % (rovingLocations.Length);
                         BaseHelper.GoUntilReachedGoalOrCanceled(rovingLocations[curLocationIndex]);
                         Console.WriteLine("Reached goal! Waiting for next location");
-                        ThreadHelper.Wait(1000 * 10);
+                        ThreadHelper.Wait(1000 * 2);
                     } 
                     else
                     {
