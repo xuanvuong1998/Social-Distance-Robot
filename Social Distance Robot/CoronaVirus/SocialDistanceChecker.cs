@@ -22,6 +22,8 @@ namespace robot_head
 
         private static Process pythonProcess;
 
+        private static FrmWarning frmWarning = new FrmWarning();
+
         private static void KeepReadingData()
         {
             ProcessStartInfo processInfo = new ProcessStartInfo
@@ -114,10 +116,11 @@ namespace robot_head
             Thread thread = new Thread(new ThreadStart(() =>
             {
                 WarningTarget();
-                
             }));
 
             thread.Start();
+
+            frmWarning.ShowDialog();
         }
 
         private static void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
@@ -148,12 +151,13 @@ namespace robot_head
         }
         private static void WarningTarget()
         {
+            
             AudioHelper.PlayAlarmSound();
 
             Synthesizer.Speak("Please practice social distancing! At least 1 meter apart");
             Synthesizer.Speak("Again, at least 1 meter apart please");
 
-            Wait(4000);
+            Wait(1000);
 
             IsDetected = false;
         }

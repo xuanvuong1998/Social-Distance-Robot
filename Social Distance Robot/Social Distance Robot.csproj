@@ -147,6 +147,12 @@
     <Compile Include="Commons\GlobalData.cs" />
     <Compile Include="Commons\GlobalFlowControl.cs" />
     <Compile Include="Commons\SpeechGeneration.cs" />
+    <Compile Include="CoronaVirus\FrmWarning.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CoronaVirus\FrmWarning.Designer.cs">
+      <DependentUpon>FrmWarning.cs</DependentUpon>
+    </Compile>
     <Compile Include="CoronaVirus\Roving.cs" />
     <Compile Include="CoronaVirus\SocialDistanceChecker.cs" />
     <Compile Include="DataModel\AnswerTemplate.cs" />
@@ -169,6 +175,9 @@
     <Compile Include="SchedulerServices\TelepresenceScheduler.cs" />
     <Compile Include="Telepresence\RobotFaceBrowser.cs" />
     <Compile Include="Telepresence\TelepresenceControlHandler.cs" />
+    <EmbeddedResource Include="CoronaVirus\FrmWarning.resx">
+      <DependentUpon>FrmWarning.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -213,6 +222,8 @@
     <Content Include="dlls\rosbridge_client_socket_for_desktop.dll" />
     <Content Include="dlls\ROSHelper.dll" />
     <Content Include="dlls\SpeechLibrary.dll" />
+    <Content Include="images\danger.PNG" />
+    <Content Include="images\socialDistancing.PNG" />
     <Content Include="media\Alarm1.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -220,6 +231,11 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="ReadME.txt" />
+    <None Include="Resources\socialDistancing1.jpg" />
+    <None Include="Resources\socialDistancing.jpg" />
+    <None Include="Resources\danger.PNG" />
+    <None Include="Resources\socialDistancing1.PNG" />
+    <None Include="Resources\socialDistancing.PNG" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\Microsoft.NetCore.Analyzers.2.9.7\analyzers\dotnet\cs\Microsoft.NetCore.Analyzers.dll" />

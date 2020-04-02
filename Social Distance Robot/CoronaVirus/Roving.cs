@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+    
 namespace robot_head
 {
     class Roving
@@ -24,7 +24,7 @@ namespace robot_head
                         curLocationIndex = (curLocationIndex + 1) % (rovingLocations.Length);
                         BaseHelper.GoUntilReachedGoalOrCanceled(rovingLocations[curLocationIndex]);
                         Console.WriteLine("Reached goal! Waiting for next location");
-                        ThreadHelper.Wait(1000 * 5);
+                        ThreadHelper.Wait(1000 * 10);
                     } 
                     else
                     {
