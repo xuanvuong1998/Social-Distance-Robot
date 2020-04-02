@@ -89,6 +89,18 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Downloads\ROBOT\Robotx64\Robot\bin\Debug\Robot.dll</HintPath>
     </Reference>
+    <Reference Include="rosbridge_client_common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>dlls\rosbridge_client_common.dll</HintPath>
+    </Reference>
+    <Reference Include="rosbridge_client_socket_for_desktop, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>dlls\rosbridge_client_socket_for_desktop.dll</HintPath>
+    </Reference>
+    <Reference Include="ROSHelper, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>dlls\ROSHelper.dll</HintPath>
+    </Reference>
     <Reference Include="SpeechLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>dlls\SpeechLibrary.dll</HintPath>
@@ -197,6 +209,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="dlls\Robot.dll" />
+    <Content Include="dlls\rosbridge_client_common.dll" />
+    <Content Include="dlls\rosbridge_client_socket_for_desktop.dll" />
+    <Content Include="dlls\ROSHelper.dll" />
     <Content Include="dlls\SpeechLibrary.dll" />
     <Content Include="media\Alarm1.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
