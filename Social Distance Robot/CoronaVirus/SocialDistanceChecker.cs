@@ -16,6 +16,7 @@ namespace robot_head
 
         // Value of smallest distance from robot to one of detected group
         public static double MinDetectedDistance { get; set; } = 10000000.0;
+        private const double CM_PER_PIXEL = 0.3421;
 
         public const double MAX_DISTANCE = 100; //1 meter
 
@@ -60,9 +61,9 @@ namespace robot_head
         }
         private static bool IsClose(string p1, string p2)
         {
-            double x1 = GetX(p1);
+            double x1 = GetX(p1) * CM_PER_PIXEL;
             double d1 = GetD(p1) * 100;
-            double x2 = GetX(p2);
+            double x2 = GetX(p2) * CM_PER_PIXEL;
             double d2 = GetD(p2) * 100;
 
             MinDetectedDistance = Math.Min(MinDetectedDistance, Math.Min(d1, d2));
@@ -142,8 +143,6 @@ namespace robot_head
         private static void WarningTarget()
         {
             AudioHelper.PlayAlarmSound();
-
-            Synthesizer.SelectVoiceByName("IVONA 2 Brian OEM");
 
             Synthesizer.Speak("Please practice social distancing! At least 1 meter apart");
             Synthesizer.Speak("Again, at least 1 meter apart please");

@@ -40,7 +40,7 @@ namespace robot_head
 
         public static void PlayAlarmSound()
         {
-            PlayAudioSync("Alarm1.wav");             
+            PlayAudioSync("Alarm2.wav");             
         }
     }
 }

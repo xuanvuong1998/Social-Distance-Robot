@@ -25,7 +25,7 @@ namespace robot_head
                         BaseHelper.GoUntilReachedGoalOrCanceled(rovingLocations[curLocationIndex]);
                         Console.WriteLine("Reached goal! Waiting for next location");
                         ThreadHelper.Wait(1000 * 5);
-                    }
+                    } 
                     else
                     {
                         ThreadHelper.Wait(1000); // reduce workload (keep looping)
