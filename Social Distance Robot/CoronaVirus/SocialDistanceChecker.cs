@@ -167,11 +167,10 @@ namespace robot_head
         }
         private static void WarningTarget()
         {
-            
             AudioHelper.PlayAlarmSound();
 
-            Synthesizer.Speak("Please practice social distancing! At least 1 meter apart");
-            Synthesizer.Speak("Again, at least 1 meter apart please");
+            Synthesizer.Speak("Please practice social distancing for your own safety! At least 1 meter apart");
+            Synthesizer.Speak("Again, Keep 1 meter apart please");
 
             Wait(1000 * 2);
             

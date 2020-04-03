@@ -252,10 +252,6 @@
     </Content>
     <Content Include="ReadME.txt" />
     <None Include="Resources\socialDistancing1.jpg" />
-    <None Include="Resources\socialDistancing.jpg" />
-    <None Include="Resources\danger.PNG" />
-    <None Include="Resources\socialDistancing1.PNG" />
-    <None Include="Resources\socialDistancing.PNG" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\Microsoft.NetCore.Analyzers.2.9.7\analyzers\dotnet\cs\Microsoft.NetCore.Analyzers.dll" />
