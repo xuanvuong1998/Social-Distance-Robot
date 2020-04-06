@@ -36,12 +36,17 @@ namespace robot_head
             TelepresenceControlHandler.LoadDailyAnnouncement();
         }
 
+        private void DisplayRobotFace()
+        {
+            pictureBox1.Size = this.Size;
+        }
         private void MainForm_Load(object sender, EventArgs e)
         {
-            DisplayWebFace();            
+            //DisplayWebFace();            
             //RobotFaceBrowser.ChooseRobotIDAutoimatically();
             //SpeechGeneration.SetUp(System.Speech.Synthesis.VoiceGender.Female, System.Speech.Synthesis.VoiceAge.Child);
             InitUI();
+            DisplayRobotFace();
             InitSpeech();
             //ChatModule.Init();
             //LoadAnnc();
@@ -53,7 +58,7 @@ namespace robot_head
 
             BaseHelper.Connect();
 
-            SocialDistanceChecker.StartChecking();
+            //SocialDistanceChecker.StartChecking();
             //FollowingPerson.ReadChanges();
         }
 

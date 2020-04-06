@@ -18,9 +18,8 @@ namespace robot_head
         {
             InitializeComponent();
             this.WindowState = FormWindowState.Maximized;
-            //MessageBox.Show(this.Size.Width + " " + this.Size.Height);
            
-            timer.Interval = 1000 * 10;
+            timer.Interval = 1000 * 12;
             timer.AutoReset = false;
             timer.Elapsed += Timer_Elapsed;
         }

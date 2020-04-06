@@ -226,8 +226,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Database\backward.txt" />
-    <Content Include="Database\forward.txt" />
     <Content Include="Database\RobotLocation.accdb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -251,6 +249,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="ReadME.txt" />
+    <None Include="Resources\robot_face.gif" />
     <None Include="Resources\socialDistancing1.jpg" />
   </ItemGroup>
   <ItemGroup>

@@ -17,8 +17,11 @@ namespace robot_head
         // Value of smallest distance from robot to one of detected group
         public static double MinDetectedDistance { get; set; } = 10000000.0;
         private const double CM_PER_PIXEL = 0.3421;
+        private const double MIN_X_DELTA_IN_CM = 20; 
 
-        public const double MAX_DISTANCE = 120; //1 meter
+        public const double MAX_DISTANCE = 125; // extra 25cm (because the calculated distance is 
+                                // distance between 2 people's nest while we will mesaure 
+                                // the social distance between their 2 most side
 
         private static Process pythonProcess;
 
@@ -69,10 +72,10 @@ namespace robot_head
             double x2 = GetX(p2) * CM_PER_PIXEL;
             double d2 = GetD(p2) * 100;
 
-            if (d1 == 0 || d2 == 0) return false;
+            // Fault detection
+            if (Math.Abs(x1 - x2) < MIN_X_DELTA_IN_CM) return false;
 
-            //if (d1 == 0) d1 = 120; // strange issue, sometimes received 0 data from python 
-            //if (d2 == 0) d2 = 120; // 
+            if (d1 == 0 || d2 == 0) return false;
 
             MinDetectedDistance = Math.Min(MinDetectedDistance, Math.Min(d1, d2));
 
@@ -131,8 +134,7 @@ namespace robot_head
         private static bool IsNotValidData(string mess)
         {
             if (string.IsNullOrEmpty(mess) 
-                || mess.Contains("%") == false
-                || mess.Contains("0.0")) return false;
+                || mess.Contains("%") == false) return false;
 
             return true;
             
@@ -142,15 +144,15 @@ namespace robot_head
         {
             string mess = e.Data;
 
-            Console.WriteLine(mess);
-
             if (IsNotValidData(mess) == false) return;
             
             mess = mess.Remove(e.Data.Length - 1); // remove last %
             
             if (IsDetected == false)
             {
-                Console.WriteLine("Processing");
+                Console.WriteLine(mess);
+
+                Console.WriteLine("Detected!");
                 bool warning = CheckDistance(mess);
 
                 if (warning)
