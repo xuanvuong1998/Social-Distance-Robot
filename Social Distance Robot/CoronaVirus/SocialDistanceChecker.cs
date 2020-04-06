@@ -17,9 +17,9 @@ namespace robot_head
         // Value of smallest distance from robot to one of detected group
         public static double MinDetectedDistance { get; set; } = 10000000.0;
         private const double CM_PER_PIXEL = 0.3421;
-        private const double MIN_X_DELTA_IN_CM = 20; 
+        private const double MIN_X_DELTA_IN_CM = 40; 
 
-        public const double MAX_DISTANCE = 125; // extra 25cm (because the calculated distance is 
+        public const double MAX_DISTANCE = 110; // extra 10cm (because the calculated distance is 
                                 // distance between 2 people's nest while we will mesaure 
                                 // the social distance between their 2 most side
 
@@ -113,7 +113,7 @@ namespace robot_head
         }
         public static void StartChecking()
         {
-            Roving.Start();
+            //Roving.Start();
 
             ThreadHelper.StartNewThread(new Action(() => KeepReadingData()));
         }
@@ -152,11 +152,11 @@ namespace robot_head
             {
                 Console.WriteLine(mess);
 
-                Console.WriteLine("Detected!");
                 bool warning = CheckDistance(mess);
 
                 if (warning)
                 {
+                    Console.WriteLine("Detected!");
                     IsDetected = true;
                     ProcessData(mess);
                 }

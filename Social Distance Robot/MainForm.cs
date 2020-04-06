@@ -38,6 +38,7 @@ namespace robot_head
 
         private void DisplayRobotFace()
         {
+            pictureBox1.Location = new System.Drawing.Point(0, 0);
             pictureBox1.Size = this.Size;
         }
         private void MainForm_Load(object sender, EventArgs e)
@@ -58,7 +59,7 @@ namespace robot_head
 
             BaseHelper.Connect();
 
-            //SocialDistanceChecker.StartChecking();
+            SocialDistanceChecker.StartChecking();
             //FollowingPerson.ReadChanges();
         }
 
