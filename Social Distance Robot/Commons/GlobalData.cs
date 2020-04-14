@@ -14,6 +14,7 @@ namespace robot_head
         public static readonly string Voice1 = ConfigurationManager.AppSettings["Voice 1"];
         public static readonly string Voice2 = ConfigurationManager.AppSettings["Voice 2"];
         public static readonly string Voice3 = ConfigurationManager.AppSettings["Voice 3"];
+        public static readonly string Voice4 = ConfigurationManager.AppSettings["Voice 4"];
 
 
         public static readonly string TELEPRESENCE_URL

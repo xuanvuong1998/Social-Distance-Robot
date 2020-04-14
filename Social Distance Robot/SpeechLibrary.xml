@@ -1,0 +1,168 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>SpeechLibrary</name>
+    </assembly>
+    <members>
+        <member name="P:SpeechLibrary.Recognizer.KeywordRecognized">
+            <summary>
+            The property to indicate the required keyword is recognized or not yet
+            </summary>
+        </member>
+        <member name="P:SpeechLibrary.Recognizer.RecognizedWords">
+            <summary>
+            set or get the final recognized words
+            </summary>
+        </member>
+        <member name="P:SpeechLibrary.Recognizer.SilenceTimeOut">
+            <summary>
+            The interval to check the silence sound. Default value is 1 second         
+            </summary>
+        </member>
+        <member name="M:SpeechLibrary.Recognizer.Setup(System.String,System.String)">
+            <summary>        
+            </summary>
+            <param name="subscriptionKey">Visit azure portal to have the subscription key</param>
+            <param name="subcriptionRegion">Visit azure portal to have the subcription region</param>
+        </member>
+        <member name="M:SpeechLibrary.Recognizer.Setup(Microsoft.CognitiveServices.Speech.SpeechConfig)">
+            <summary>        
+            </summary>
+            <param name="config">SpeechConfig including speech subcription and subscription region</param>
+        </member>
+        <member name="M:SpeechLibrary.Recognizer.ForceStopRecognizing">
+            <summary>
+            Force stop recognizing but record recognized words
+            </summary>
+        </member>
+        <member name="M:SpeechLibrary.Recognizer.StopAndDeleteRecognizedWords">
+            <summary>
+            Stop recognizing immediately without getting any recognized ulternances
+            </summary>
+        </member>
+        <member name="M:SpeechLibrary.Recognizer.RecognizeKeyword(System.String)">
+            <summary>
+            Recognize 
+            </summary>
+            <param name="requiredKeywords"></param>
+            <returns></returns>        
+        </member>
+        <member name="M:SpeechLibrary.Recognizer.RecognizeKeywordWithTimeout(System.String,System.Int32)">
+            <summary>
+            Recognize keyword with timeout
+            </summary>
+            <param name="requiredKeywords">required keywords</param>
+            <param name="maxRecogTime">After this period of time, stop recognizing</param>
+            <returns></returns>
+        </member>
+        <member name="M:SpeechLibrary.Recognizer.RecognizeQuery(System.Int32)">
+            <summary>
+            Recognize a single query (ulterance) until meet a first silence sound
+            If after 5 times recognized empty string, the recognizer will stop
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:SpeechLibrary.Recognizer.RecognizeQueryWithTimeOut(System.Int32,System.Int32)">
+            <summary>
+            Recognize question with a specific timeout (It may stop before timeout when 
+            recognzied the proper query and meet a silence sound
+            </summary>
+            <param name="minRequiredLength"></param>
+            <param name="maxRecogTime"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SpeechLibrary.ChatBot.Setup(System.String,System.String)">
+            <summary>        
+            </summary>
+            <param name="directLineKey">Key to link between application and chatbot through direct line
+            Can get this key from azure (chat bot -> channel)
+            </param>
+            <param name="botId">Name of the chat bot, get from azure service</param>
+        </member>
+        <member name="M:SpeechLibrary.ChatBot.GetResponse(System.String)">
+            <summary>
+            Get a random Response from the QnA MAKER (Multiple answers with delimiter '|')
+            </summary>
+            <param name="question"></param>
+            <returns></returns>
+        </member>
+        <member name="M:SpeechLibrary.Synthesizer.GetInstalledVoicesName">
+            <summary>        
+            </summary>
+            <returns>The list of all installed voices name (Local)</returns>
+        </member>
+        <member name="M:SpeechLibrary.Synthesizer.SetLanguage(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="language">en: english, ch: chinese</param>
+        </member>
+        <member name="M:SpeechLibrary.Synthesizer.SetVolume(System.Int32)">
+            <summary>
+            Set volume of speaker (1 - 10)
+            </summary>
+            <param name="vol">min 1: max: 10</param>
+        </member>
+        <member name="M:SpeechLibrary.Synthesizer.SetSpeed(System.Int32)">
+            <summary>
+            Set speed or rate of the voice (Min 0, Max 10)
+            </summary>
+            <param name="rate"></param>
+        </member>
+        <member name="M:SpeechLibrary.Synthesizer.SetAge(System.String)">
+            <summary>
+            Set age for the voice if available (dowload different voices in https://harposoftware.com/) 
+            </summary>
+            
+            <param name="age">child, teen, adult</param>
+        </member>
+        <member name="M:SpeechLibrary.Synthesizer.SetGender(System.String)">
+            <summary>
+            Set gender of the voice 
+            </summary>
+            <param name="gender">male, female</param>
+        </member>
+        <member name="M:SpeechLibrary.Synthesizer.SelectVoiceByGenderAndAge(System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="gender">male, female</param>
+            <param name="age">child, teen, adult</param>
+        </member>
+        <member name="M:SpeechLibrary.Synthesizer.SelectVoiceByName(System.String)">
+            <summary>
+            Select voice by name which must installed on the system. See installed voice by calling 
+            GetInstalledVoices(). If the chosen voice is not available, voice will be set as default
+            </summary>
+            <example>Vocalizer Expressive Tian-tian Harpo 22kHz, IVONA 2 Ivy OEM</example>
+            <param name="voiceName"></param>
+        </member>
+        <member name="M:SpeechLibrary.Synthesizer.Pause">
+            <summary>
+            Pause the current speak
+            </summary>  
+        </member>
+        <member name="M:SpeechLibrary.Synthesizer.Resume">
+            <summary>
+            Continue speaking        
+            </summary>
+        </member>
+        <member name="M:SpeechLibrary.Synthesizer.Speak(System.String)">
+            <summary>
+            Speak a message synchronously
+            </summary>
+            <param name="message"></param>
+        </member>
+        <member name="M:SpeechLibrary.Synthesizer.SpeakAsync(System.String)">
+            <summary>
+            Speak a message asynchronously
+            </summary>
+            <param name="message"></param>
+        </member>
+        <member name="M:SpeechLibrary.Synthesizer.StopSpeaking">
+            <summary>
+            Stop speaking everything. This can throw an exception though it can make everything stop speaking
+            </summary>
+        </member>
+    </members>
+</doc>

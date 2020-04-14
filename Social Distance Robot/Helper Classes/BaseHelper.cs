@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -16,7 +17,6 @@ namespace robot_head
     {
         public static readonly double DEFAULT_LINEAR_SPEED = 0.3;
         public static readonly double DEFAULT_ANGULAR_SPEED = 0.6;
-
 
         private static double linearSpeed;
 
@@ -282,7 +282,7 @@ namespace robot_head
         }
 
         public static bool IsReachedGoal() => GetNavigationStatus() == "Goal reached.";
-
+        
         public static string GetNavigationStatus()
         {
             return ROS.DataList[ROSTopic.NAVIGATION_STATUS].Data;
@@ -290,6 +290,7 @@ namespace robot_head
         static public void CancelNavigation()
         {
             //rBase.Stop();
+            //Stop();
             rBase.CancelNavigation();
         }
         static public void Go(string location)
@@ -317,7 +318,6 @@ namespace robot_head
             {
 
             }
-            
         }
 
         private static void RBase_NavigationStatusChanged(object o, NavigationStatusEventArgs e)
@@ -345,13 +345,19 @@ namespace robot_head
             try
             {
                 rBase.Connect(GlobalData.ROS_IP);
-                rBase.Initialise();
+                rBase.Initialise(); 
                 rBase.NavigationStatusChanged += RBase_NavigationStatusChanged;
+                rBase.GeneralMessageReceived += RBase_GeneralMessageReceived;
             }
             catch (Exception ex)
             {
                 throw ex;
             }
+        }
+
+        private static void RBase_GeneralMessageReceived(object sender, GeneralMessageEventArgs e)
+        {
+            Debug.WriteLine("General Message Received: " + e.Message);
         }
 
         static public void Disconnect()

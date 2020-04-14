@@ -43,7 +43,7 @@ namespace robot_head
         }
         private void MainForm_Load(object sender, EventArgs e)
         {
-            //DisplayWebFace();            
+            //DisplayWebFace();           
             //RobotFaceBrowser.ChooseRobotIDAutoimatically();
             //SpeechGeneration.SetUp(System.Speech.Synthesis.VoiceGender.Female, System.Speech.Synthesis.VoiceAge.Child);
             InitUI();
@@ -59,6 +59,8 @@ namespace robot_head
 
             BaseHelper.Connect();
 
+            //SocialDistanceChecker.StartWarning();
+
             SocialDistanceChecker.StartChecking();
             //FollowingPerson.ReadChanges();
         }
@@ -66,6 +68,8 @@ namespace robot_head
         private void InitSpeech()
         {
             Synthesizer.SelectVoiceByName(GlobalData.Voice2);
+            //Synthesizer.SelectVoiceByName(GlobalData.Voice2);
+            Synthesizer.SetSpeed(1);
         }
 
         private void InitExcelHelper()
@@ -102,11 +106,11 @@ namespace robot_head
         {
             //LattePandaCommunication.Stop();
             
-            if (ExcelHelper.table.Rows.Count >= 5)
-            {
-                MessageBox.Show("PRESS OK TO SAVE ALL THE RECORDS!");
-                ExcelHelper.ExportToFile();
-            }
+            //if (ExcelHelper.table.Rows.Count >= 5)
+            //{
+            //    MessageBox.Show("PRESS OK TO SAVE ALL THE RECORDS!");
+            //    ExcelHelper.ExportToFile();
+            //}
             Environment.Exit(0);
         }
 
