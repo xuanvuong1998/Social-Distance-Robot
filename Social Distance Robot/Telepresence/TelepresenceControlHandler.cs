@@ -14,6 +14,7 @@ namespace robot_head
         {
             if (recMsg == null) return;
 
+            Debug.WriteLine("MESSAGE FROM TELEPRESENCE: " + recMsg);
             //System.Windows.Forms.MessageBox.Show(recMsg);
             string[] msg = recMsg.Split(new[] { '/' }, 2);
                        

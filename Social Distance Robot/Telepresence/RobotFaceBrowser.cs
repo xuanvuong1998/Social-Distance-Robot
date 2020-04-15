@@ -27,12 +27,11 @@ namespace robot_head
             // name must be same for both js and c# code
             //bind function from javascript to c#                    
             browser.JavascriptObjectRepository.Register(binderName, objectToBind, true);
-                       
         }
      
         public static void ChooseRobotIDAutoimatically()
         {           
-           browser.ExecuteScriptAsyncWhenPageLoaded("document.getElementById('Testing').click();");
+           browser.ExecuteScriptAsyncWhenPageLoaded("document.getElementById('testing').click();");
         }
         
         public static void InitiateCall()

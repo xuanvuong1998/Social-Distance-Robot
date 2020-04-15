@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Robot;
 using Robot.Data;
+using SpeechLibrary;
 using ROS = Robot.Data.ROS;
 using Timer = System.Timers.Timer;
 
@@ -305,6 +306,11 @@ namespace robot_head
                 GlobalFlowControl.Navigation.Reset();
             }
         }
+        
+        static public void Go(decimal x, decimal y, decimal z, decimal w)
+        {
+            rBase.Go(new BotLocation(x, y, z, w));
+        }
 
         static public void GoUntilReachedGoalOrCanceled(string location)
         {
@@ -320,23 +326,7 @@ namespace robot_head
             }
         }
 
-        private static void RBase_NavigationStatusChanged(object o, NavigationStatusEventArgs e)
-        {
-            if (e.Status == "Goal reached.")
-            {
-                GlobalFlowControl.Navigation.ReachedGoal = true;
-
-            }
-            else if (e.Status.Length == 0)
-            {
-                GlobalFlowControl.Navigation.Canceled = true;
-            }
-            else
-            {
-                GlobalFlowControl.Navigation.Stucked = true;
-            }
-
-        }
+   
         #endregion
 
         #region Setup
@@ -355,10 +345,7 @@ namespace robot_head
             }
         }
 
-        private static void RBase_GeneralMessageReceived(object sender, GeneralMessageEventArgs e)
-        {
-            Debug.WriteLine("General Message Received: " + e.Message);
-        }
+       
 
         static public void Disconnect()
         {
@@ -390,6 +377,53 @@ namespace robot_head
 
         #endregion
 
+        #region Message From ROS
+        private static void RBase_GeneralMessageReceived(object sender, GeneralMessageEventArgs e)
+        {
+            Debug.WriteLine("General Message Received: " + e.Message);
+
+            var title = e.Message.Split('-')[0];
+            var data = e.Message.Split('-')[1];
+
+            if (title == "SocialDistanceDetected")
+            {
+                decimal xPos = decimal.Parse(data.Split(',')[0]); 
+                decimal yPos = decimal.Parse(data.Split(',')[1]); 
+
+                Debug.WriteLine("Detected from Lidar: " + xPos + "---" + yPos);
+
+                Synthesizer.SpeakAsync("Lidar detected some people are being close " +
+                    "each other. ");
+
+                Go(xPos, yPos, 0, 0);
+            }
+            else if (title == "DetectedCount")
+            {
+                Debug.WriteLine("Total detected people: " + data);
+
+                Synthesizer.SpeakAsync("Total detected people from Lidar is: " + data);
+            }
+        }
+
+        private static void RBase_NavigationStatusChanged(object o, NavigationStatusEventArgs e)
+        {
+            if (e.Status == "Goal reached.")
+            {
+                GlobalFlowControl.Navigation.ReachedGoal = true;
+
+            }
+            else if (e.Status.Length == 0)
+            {
+                GlobalFlowControl.Navigation.Canceled = true;
+            }
+            else
+            {
+                GlobalFlowControl.Navigation.Stucked = true;
+            }
+
+        }
+
+        #endregion
 
 
     }

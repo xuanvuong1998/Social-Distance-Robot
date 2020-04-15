@@ -38,16 +38,17 @@ namespace robot_head
 
         private void DisplayRobotFace()
         {
+            pictureBox1.Show();
             pictureBox1.Location = new System.Drawing.Point(0, 0);
             pictureBox1.Size = this.Size;
         }
         private void MainForm_Load(object sender, EventArgs e)
         {
-            //DisplayWebFace();           
-            //RobotFaceBrowser.ChooseRobotIDAutoimatically();
-            //SpeechGeneration.SetUp(System.Speech.Synthesis.VoiceGender.Female, System.Speech.Synthesis.VoiceAge.Child);
+            pictureBox1.Hide(); 
+            DisplayWebFace();           
+           
             InitUI();
-            DisplayRobotFace();
+            //DisplayRobotFace();
             InitSpeech();
             //ChatModule.Init();
             //LoadAnnc();
@@ -59,10 +60,7 @@ namespace robot_head
 
             BaseHelper.Connect();
 
-            //SocialDistanceChecker.StartWarning();
-
-            SocialDistanceChecker.StartChecking();
-            //FollowingPerson.ReadChanges();
+            //SocialDistanceChecker.StartChecking();
         }
 
         private void InitSpeech()
@@ -99,6 +97,8 @@ namespace robot_head
 
             //Make the browser fill the entire form
             RobotFaceBrowser.browser.Dock = DockStyle.Fill;
+
+            RobotFaceBrowser.ChooseRobotIDAutoimatically();
 
         }
 

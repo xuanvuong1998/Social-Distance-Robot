@@ -222,10 +222,13 @@ namespace robot_head
                     {
                         Debug.WriteLine("Time out! Cancelled first detected");
                         _capturedFrames.Clear();
-                        Debug.WriteLine("First Detected! Keep checking");
+                        Debug.WriteLine("New First Detected! Keep checking");
+                        _first_detected_time = DateTime.Now;
                     }
 
                     _capturedFrames.Add(mess);
+
+                    Debug.WriteLine(_capturedFrames.Count + ". ");
                     if (_capturedFrames.Count == FRAMES_PER_CHECK)
                     {
                         int detectedTime = 0;
