@@ -39,11 +39,18 @@ namespace robot_head
             browser.ExecuteScriptAsync("document.getElementById('initiate-call').click();");
         }
 
-        public static void SendReachedLocation()
+        public static void SendReachedLocation() 
         {
             browser.ExecuteScriptAsync("document.getElementById('reached-location').click();");
         }
 
+        #region Social Distancing
+        
+        public static void CaptureEvidence()
+        {
+            browser.ExecuteScriptAsync("document.getElementById('take-snapshot').click();");
+        }
+        #endregion
     }
 
 }

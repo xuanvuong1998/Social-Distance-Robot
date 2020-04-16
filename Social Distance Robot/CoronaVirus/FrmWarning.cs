@@ -14,12 +14,14 @@ namespace robot_head
     public partial class FrmWarning : Form
     {
         Timer timer = new Timer();
+        
+        private const int TIMEOUT = 1000 * 15;
         public FrmWarning()
         {
             InitializeComponent();
             this.WindowState = FormWindowState.Maximized;
            
-            timer.Interval = 1000 * 12;
+            timer.Interval = TIMEOUT;
             timer.AutoReset = false;
             timer.Elapsed += Timer_Elapsed;
         }

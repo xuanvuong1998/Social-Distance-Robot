@@ -24,6 +24,10 @@ namespace robot_head
 
         }
 
+        public CameraTest(Image image): this(){
+            picCapture.Image = image;
+        }
+
         private void button1_Click(object sender, EventArgs e)
         {
             camera.Start();

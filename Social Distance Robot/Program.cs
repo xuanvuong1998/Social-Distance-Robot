@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,15 +20,27 @@ namespace robot_head
         [STAThread]
         static void Main()
         {
-            //SocialDistanceChecker.StartWarning();
+            //string Path = @"C:\RobotReID\CapturedImages\Evidence.jpg";
+            //using (Image image = Image.FromFile(Path))
+            //{
+            //    using (MemoryStream m = new MemoryStream())
+            //    {
+            //        image.Save(m, image.RawFormat);
+            //        byte[] imageBytes = m.ToArray();
+                    
+            //        Console.WriteLine(imageBytes.Length); 
 
-            //Thread.Sleep(1000 * 10);
+            //        // Convert byte[] to Base64 String
+            //        string base64String = Convert.ToBase64String(imageBytes);
+
+            //        Console.WriteLine(base64String.Substring(0, 100));
+            //    }
+            //}
+
             //return;
-            //Console.ReadKey();
 
-            //var x = Synthesizer.GetInstalledVoicesName();
 
-            //SocialDistanceChecker.CheckDistance("490,0.91%295,4.45"); return;
+            //SocialDistanceChecker.CheckDistance("497,3.37%278,3.86"); return;
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

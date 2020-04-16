@@ -16,7 +16,7 @@ namespace robot_head
         
         public void InitUI()
         {
-            FormBorderStyle = FormBorderStyle.None;
+            //FormBorderStyle = FormBorderStyle.None;
             WindowState = FormWindowState.Maximized;            
             // Top Most : Don't use TopMost property. It will freeze your UI
         }
@@ -45,29 +45,28 @@ namespace robot_head
         private void MainForm_Load(object sender, EventArgs e)
         {
             pictureBox1.Hide(); 
-            DisplayWebFace();           
+            //DisplayWebFace();           
            
-            InitUI();
-            //DisplayRobotFace();
+            InitUI(); 
+            DisplayRobotFace();
             InitSpeech();
+          
             //ChatModule.Init();
             //LoadAnnc();
-
-            //SetUpBodyLink();
             //InitExcelHelper();
             //ChatModule.Init();
             //ChatModule.Start();
 
             BaseHelper.Connect();
 
-            //SocialDistanceChecker.StartChecking();
+            SocialDistanceChecker.StartChecking();
         }
 
         private void InitSpeech()
         {
             Synthesizer.SelectVoiceByName(GlobalData.Voice2);
             //Synthesizer.SelectVoiceByName(GlobalData.Voice2);
-            Synthesizer.SetSpeed(1);
+            //Synthesizer.SetSpeed(0);
         }
 
         private void InitExcelHelper()
@@ -99,19 +98,13 @@ namespace robot_head
             RobotFaceBrowser.browser.Dock = DockStyle.Fill;
 
             RobotFaceBrowser.ChooseRobotIDAutoimatically();
-
         }
 
         private void MainForm_FormClosing_1(object sender, FormClosingEventArgs e)
         {
-            //LattePandaCommunication.Stop();
-            
-            //if (ExcelHelper.table.Rows.Count >= 5)
-            //{
-            //    MessageBox.Show("PRESS OK TO SAVE ALL THE RECORDS!");
-            //    ExcelHelper.ExportToFile();
-            //}
-            Environment.Exit(0);
+            SocialDistanceChecker.KillPython();
+
+            //Environment.Exit(0);
         }
 
         private void RestartApplication()
