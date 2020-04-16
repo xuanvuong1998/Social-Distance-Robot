@@ -23,6 +23,8 @@ namespace robot_head
 
         private static FrmWarning frmWarning = new FrmWarning();
 
+        public static bool IsDetected { get; internal set; }
+
         #endregion
 
         #region Python Process
@@ -90,7 +92,7 @@ namespace robot_head
                     // Convert byte[] to Base64 String
                     string base64String = Convert.ToBase64String(imageBytes);
 
-                    WebHelper.TestUploadImage(base64String);
+                    WebHelper.SaveEvidenceToServer(base64String);
                 }
             }
         }
@@ -104,7 +106,7 @@ namespace robot_head
             if (e.Data != null && e.Data == "social_distancing_warning")
             {
                 StartWarning();
-                //SaveEvidenceToServer();            
+                SaveEvidenceToServer();            
             }
 
             
@@ -124,6 +126,7 @@ namespace robot_head
         }
         public static void StartWarning()
         {
+            IsDetected = true;
             BaseHelper.CancelNavigation();
             Thread thread = new Thread(new ThreadStart(() =>
             {
@@ -143,8 +146,9 @@ namespace robot_head
             Synthesizer.Speak("Again, Keep 1 meter apart please");
 
             Wait(1000 * 2);
-            
-            
+
+            IsDetected = false;
+
         }
         #endregion
     }

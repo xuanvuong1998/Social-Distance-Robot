@@ -20,28 +20,6 @@ namespace robot_head
         [STAThread]
         static void Main()
         {
-            //string Path = @"C:\RobotReID\CapturedImages\Evidence.jpg";
-            //using (Image image = Image.FromFile(Path))
-            //{
-            //    using (MemoryStream m = new MemoryStream())
-            //    {
-            //        image.Save(m, image.RawFormat);
-            //        byte[] imageBytes = m.ToArray();
-                    
-            //        Console.WriteLine(imageBytes.Length); 
-
-            //        // Convert byte[] to Base64 String
-            //        string base64String = Convert.ToBase64String(imageBytes);
-
-            //        Console.WriteLine(base64String.Substring(0, 100));
-            //    }
-            //}
-
-            //return;
-
-
-            //SocialDistanceChecker.CheckDistance("497,3.37%278,3.86"); return;
-
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MainForm());
