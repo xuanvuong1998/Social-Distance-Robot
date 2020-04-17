@@ -17,7 +17,7 @@ namespace robot_head
         private const string pythonExePath = @"C:\ProgramData\Anaconda3\python.exe";
         private const string pythonFile = @"C:\RobotReID\person_re_id-master\my_social_distance.py";
         private const string PYTHON_WORKING_DIR = @"C:\RobotReID\person_re_id-master\";
-      
+        private const string EVIDENCE_FOLDER = @"C:\RobotReID\SocialDistancingEvidences\Evidence.jpg";
 
         private static Process pythonProcess;
 
@@ -68,7 +68,7 @@ namespace robot_head
         #region Flow
         public static void StartChecking()
         {
-            Roving.Start();
+            //Roving.Start();
 
             ThreadHelper.StartNewThread(new Action(() => KeepReadingData()));
         }
@@ -79,7 +79,7 @@ namespace robot_head
 
         private static void SaveEvidenceToServer()
         {
-            string Path = @"C:\RobotReID\CapturedImages\Evidence.jpg";
+            string Path = EVIDENCE_FOLDER; 
             using (Image image = Image.FromFile(Path))
             {
                 using (MemoryStream m = new MemoryStream())

@@ -16,8 +16,8 @@ namespace robot_head
 {
     public class BaseHelper
     {
-        public static readonly double DEFAULT_LINEAR_SPEED = 0.3;
-        public static readonly double DEFAULT_ANGULAR_SPEED = 0.6;
+        public static readonly double DEFAULT_LINEAR_SPEED = 0.2;
+        public static readonly double DEFAULT_ANGULAR_SPEED = 0.4;
 
         private static double linearSpeed;
 
@@ -57,7 +57,7 @@ namespace robot_head
             AngularSpeed = DEFAULT_ANGULAR_SPEED;
             LinearSpeed = DEFAULT_LINEAR_SPEED;
         }
-
+        
         #region Locations
 
         public static List<string> GetAllLocations()
