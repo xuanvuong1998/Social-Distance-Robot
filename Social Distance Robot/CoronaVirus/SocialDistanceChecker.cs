@@ -68,7 +68,7 @@ namespace robot_head
         #region Flow
         public static void StartChecking()
         {
-            //Roving.Start();
+            Roving.Start();
 
             ThreadHelper.StartNewThread(new Action(() => KeepReadingData()));
         }
@@ -108,7 +108,6 @@ namespace robot_head
                 StartWarning();
                 SaveEvidenceToServer();            
             }
-
             
         }
         private static void Process_ErrorDataReceived(object sender, DataReceivedEventArgs e)
@@ -131,7 +130,7 @@ namespace robot_head
             Thread thread = new Thread(new ThreadStart(() =>
             {
                 frmWarning.ShowDialog();
-            }));
+            })); 
 
             thread.Start();
 

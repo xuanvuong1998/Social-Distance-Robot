@@ -17,14 +17,13 @@ namespace robot_head
             Action action = new Action(() =>
             {
                 while (true)
-                {
+                {                      
                     if (SocialDistanceChecker.IsDetected == false)
                     {
                         Console.Write("Robot is moving");
                         curLocationIndex = (curLocationIndex + 1) % (rovingLocations.Length);
                         BaseHelper.GoUntilReachedGoalOrCanceled(rovingLocations[curLocationIndex]);
                         Console.WriteLine("Reached goal! Waiting for next location");
-                        ThreadHelper.Wait(1000 * 2);
                     } 
                     else
                     {

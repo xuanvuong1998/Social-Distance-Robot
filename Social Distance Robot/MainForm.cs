@@ -11,7 +11,6 @@ namespace robot_head
 {
     public partial class MainForm : Form
     {
-
         private static Timer savingTimer = new Timer();
         
         public void InitUI()
@@ -45,10 +44,10 @@ namespace robot_head
         private void MainForm_Load(object sender, EventArgs e)
         {
             pictureBox1.Hide(); 
-            //DisplayWebFace();           
+            DisplayWebFace();           
            
             InitUI(); 
-            DisplayRobotFace();
+            //DisplayRobotFace();
             InitSpeech();
           
             //ChatModule.Init();
@@ -65,8 +64,7 @@ namespace robot_head
         private void InitSpeech()
         {
             Synthesizer.SelectVoiceByName(GlobalData.Voice2);
-            //Synthesizer.SelectVoiceByName(GlobalData.Voice2);
-            //Synthesizer.SetSpeed(0);
+            
         }
 
         private void InitExcelHelper()

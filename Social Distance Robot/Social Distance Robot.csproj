@@ -264,7 +264,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="CoronaVirus\SocialDistance.txt" />
+    <Content Include="CoronaVirus\my_social_distance.py" />
     <Content Include="Database\RobotLocation.accdb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
