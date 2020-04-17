@@ -382,6 +382,22 @@ namespace robot_head
         {
             Debug.WriteLine("General Message Received: " + e.Message);
 
+            if (e.Message.Contains("SocialDistanceDetected"))
+            {
+                double dis = double.Parse(e.Message.Split(',')[3]);
+                double xDetectedPos = double.Parse(e.Message.Split(',')[1]);
+                double yDetectedPos = double.Parse(e.Message.Split(',')[2]);
+
+                if (dis >= SocialDistanceChecker.MIN_DISTANCE_IN_CHARGE
+                    && dis <= SocialDistanceChecker.MAX_DISTANCE_IN_CHARGE)
+                { 
+                    SocialDistanceChecker.StartReminding();
+                }
+            }
+
+            return;
+
+            Debug.WriteLine("cc");
             var title = e.Message.Split('-')[0];
             var data = e.Message.Split('-')[1];
 

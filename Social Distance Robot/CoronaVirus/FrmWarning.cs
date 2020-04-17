@@ -20,6 +20,7 @@ namespace robot_head
         {
             InitializeComponent();
             this.WindowState = FormWindowState.Maximized;
+            this.FormBorderStyle = FormBorderStyle.None;
            
             timer.Interval = TIMEOUT;
             timer.AutoReset = false;

@@ -37,7 +37,10 @@ namespace robot_head
             }
         }
 
-
+        public static void PlayRemindSound()
+        {
+            PlayAudioSync("Remind1.wav");
+        }
         public static void PlayAlarmSound()
         {
             PlayAudioSync("Alarm2.wav");             

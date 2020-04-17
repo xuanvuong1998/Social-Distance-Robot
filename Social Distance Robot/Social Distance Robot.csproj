@@ -291,6 +291,9 @@
     <Content Include="media\Alarm2.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="media\Remind1.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="ReadME.txt" />
     <Content Include="SpeechLibrary.xml" />
     <None Include="Resources\robot_face.gif" />

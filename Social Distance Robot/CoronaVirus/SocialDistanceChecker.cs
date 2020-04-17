@@ -25,6 +25,10 @@ namespace robot_head
 
         public static bool IsDetected { get; internal set; }
 
+        public static readonly double MAX_DISTANCE_IN_CHARGE = 700;
+        public static readonly double MIN_DISTANCE_IN_CHARGE = 500;      
+        public static readonly int BEEP_PLAY_LOOP_TIME = 1;           
+
         #endregion
 
         #region Python Process
@@ -123,8 +127,23 @@ namespace robot_head
         {
             Thread.Sleep(miliSec);
         }
+
+        public static void StartReminding()
+        {
+            if (IsDetected == true) return;
+            IsDetected = true;
+            Thread thread = new Thread(new ThreadStart(() =>
+            {
+                //frmWarning.ShowDialog();
+            }));
+
+            
+            Task.Factory.StartNew(new Action(() => Remind()));
+        }
+
         public static void StartWarning()
         {
+            if (IsDetected == true) return;
             IsDetected = true;
             BaseHelper.CancelNavigation();
             Thread thread = new Thread(new ThreadStart(() =>
@@ -137,6 +156,19 @@ namespace robot_head
             Task.Factory.StartNew(new Action(() => WarningTarget()));
 
         }
+
+        private static void Remind()
+        {
+            for(int i = 1; i <= BEEP_PLAY_LOOP_TIME; i++)
+            {
+                AudioHelper.PlayRemindSound();
+                AudioHelper.PlayRemindSound();
+                AudioHelper.PlayRemindSound();
+                Synthesizer.Speak("Please practice social distancing for your own safety! At least 1 meter apart");
+
+            }
+            IsDetected = false;
+        }
         private static void WarningTarget()
         {
             AudioHelper.PlayAlarmSound();
@@ -144,7 +176,7 @@ namespace robot_head
             Synthesizer.Speak("Please practice social distancing for your own safety! At least 1 meter apart");
             Synthesizer.Speak("Again, Keep 1 meter apart please");
 
-            Wait(1000 * 2);
+            Wait(1000 * 2); 
 
             IsDetected = false;
 
