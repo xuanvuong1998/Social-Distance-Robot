@@ -17,7 +17,7 @@ namespace robot_head
     public class BaseHelper
     {
         public static readonly double DEFAULT_LINEAR_SPEED = 0.2;
-        public static readonly double DEFAULT_ANGULAR_SPEED = 0.4;
+        public static readonly double DEFAULT_ANGULAR_SPEED = 0.3;
 
         private static double linearSpeed;
 
@@ -47,7 +47,7 @@ namespace robot_head
         private static Base rBase = new Base();
         private static Timer rBaseStopTimer = new Timer();
         private static readonly double METER_PER_ROUND = 1.27484;
-
+        
         static BaseHelper()
         {
             rBaseStopTimer.Interval = 1000;
@@ -337,7 +337,7 @@ namespace robot_head
                 rBase.Connect(GlobalData.ROS_IP);
                 rBase.Initialise(); 
                 rBase.NavigationStatusChanged += RBase_NavigationStatusChanged;
-                rBase.GeneralMessageReceived += RBase_GeneralMessageReceived;
+                //rBase.GeneralMessageReceived += RBase_GeneralMessageReceived;
             }
             catch (Exception ex)
             {

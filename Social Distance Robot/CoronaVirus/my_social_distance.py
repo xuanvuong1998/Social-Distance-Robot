@@ -11,7 +11,6 @@ from run import Reid
 from primesense import openni2
 from primesense import _openni2 as c_api
 
-#Hello, I am editing from windows
 
 #############CONSTANTS################
 
@@ -23,18 +22,18 @@ START_CAMERA_ID = 2
 
 isVideoStreamedEnabled = True
 
-DELAY_PER_FRAME = 0.05 #seconds
+DELAY_PER_FRAME = 0.02 #seconds
 
 MIN_CONFIDENCE_SCORE_REQUIRED = 0.5 #percent
 
-MIN_DETECTED_COUNT_REQUIRED = 5 #times min detect count per interval  (below)
-MAX_FRAME_CHECKING_TIME_INTERVAL = 5 #seconds  
+MIN_DETECTED_COUNT_REQUIRED = 3 #times min detect count per interval  (below)
+MAX_FRAME_CHECKING_TIME_INTERVAL = 6 #seconds  
 CAMERA_VIEW_RANGE_IN_PIXEL = 500 #pixel
 MAX_ALLOWED_DISTANCE = 90 #cm
 MIN_DEPTH_TO_CAMERA = 40 #cm
+WARNING_TIME_TOTAL = 17 #seconds
 X_ERROR = 10 #cm
 DEPTH_ERROR = 0.1 #percent
-WARNING_TIME_TOTAL = 20 #seconds
 
 
 ######################################
@@ -62,7 +61,7 @@ def openDepthCamera():
         dev = openni2.Device.open_all()
     except:
         print("***Unable to open the device***")
-        
+            
 def wait(delayTime):
     if (isVideoStreamedEnabled):       
         key = cv2.waitKey(int(delayTime * 1000))   
@@ -183,6 +182,8 @@ def findAnyPair(allDetectedPeople):
                 return True
     return False
 
+
+
 def detectImage(cap, camID, depth_stream):
     
     r, img = cap.read()
@@ -274,7 +275,10 @@ def detectImage(cap, camID, depth_stream):
                 printMessage('----------DANGEROUS!!!!!!!!!!---------------')
                 saveEvidence(img)
                 sendWarningToWinForm()
+                global social_distance_detected
+                social_distance_detected = True
                 time.sleep(WARNING_TIME_TOTAL)
+                social_distance_detected = False
                 detected_count = 0
         else:
             print('------', flush=True)
@@ -286,7 +290,6 @@ def detectImage(cap, camID, depth_stream):
     showStreamingVideo(windowName, img)
 
 def showStreamingVideo(windowsName, img):
-    
     
     if (isVideoStreamedEnabled):
         cv2.imshow(windowsName, img)

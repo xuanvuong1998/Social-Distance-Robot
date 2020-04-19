@@ -11,7 +11,7 @@ namespace robot_head
 {
     public static class WebHelper
     {
-        private const string BASE_ADDRESS = "http://scout-robot.tech";
+        private const string BASE_ADDRESS = "http://robo.sg/";
         //private const string BASE_ADDRESS = "http://localhost:54297/";
         private const string ACCESS_TOKEN = "1H099XeDsRteM89yy91QonxH3mEd0DoE";
 

@@ -18,6 +18,10 @@ namespace robot_head
         private const string pythonFile = @"C:\RobotReID\person_re_id-master\my_social_distance.py";
         private const string PYTHON_WORKING_DIR = @"C:\RobotReID\person_re_id-master\";
         private const string EVIDENCE_FOLDER = @"C:\RobotReID\SocialDistancingEvidences\Evidence.jpg";
+        private const string WARNING_MESSAGE = "Please practice social " +
+            "distancing for your own safety! At least 1 meter apart. Again, at least 1 " +
+            "meter apart";
+        private const int DELAY_AFTER_WARNING = 1000 * 2; // miliseconds
 
         private static Process pythonProcess;
 
@@ -164,8 +168,7 @@ namespace robot_head
                 AudioHelper.PlayRemindSound();
                 AudioHelper.PlayRemindSound();
                 AudioHelper.PlayRemindSound();
-                Synthesizer.Speak("Please practice social distancing for your own safety! At least 1 meter apart");
-
+                Synthesizer.Speak(WARNING_MESSAGE);
             }
             IsDetected = false;
         }
@@ -173,10 +176,10 @@ namespace robot_head
         {
             AudioHelper.PlayAlarmSound();
 
-            Synthesizer.Speak("Please practice social distancing for your own safety! At least 1 meter apart");
-            Synthesizer.Speak("Again, Keep 1 meter apart please");
-
-            Wait(1000 * 2); 
+            Synthesizer.Speak(WARNING_MESSAGE);
+  
+            
+            Wait(DELAY_AFTER_WARNING); 
 
             IsDetected = false;
 
