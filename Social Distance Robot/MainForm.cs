@@ -102,6 +102,9 @@ namespace robot_head
         {
             SocialDistanceChecker.KillPython();
 
+            BaseHelper.CancelNavigation();
+            BaseHelper.Stop();
+
             //Environment.Exit(0);
         }
 

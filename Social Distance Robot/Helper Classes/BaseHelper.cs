@@ -81,6 +81,7 @@ namespace robot_head
         private static void RBaseStopTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             Stop();
+            
         }
 
         static void WaitToStop(double time)

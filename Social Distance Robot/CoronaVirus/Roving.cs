@@ -8,6 +8,7 @@ namespace robot_head
 {
     class Roving
     {
+        private const int NEXT_GOAL_DELAY = 1000 * 5;
         public static void Start()
         {
             var rovingLocations = DatabaseHelper.LocationDespDB.GetRovingLocations();
@@ -24,6 +25,7 @@ namespace robot_head
                         curLocationIndex = (curLocationIndex + 1) % (rovingLocations.Length);
                         BaseHelper.GoUntilReachedGoalOrCanceled(rovingLocations[curLocationIndex]);
                         Console.WriteLine("Reached goal! Waiting for next location");
+                        ThreadHelper.Wait(NEXT_GOAL_DELAY);
                     } 
                     else
                     {

@@ -76,7 +76,7 @@ namespace robot_head
         #region Flow
         public static void StartChecking()
         {
-            //Roving.Start();
+            Roving.Start();
 
             ThreadHelper.StartNewThread(new Action(() => KeepReadingData()));
         }
