@@ -17,7 +17,7 @@ namespace robot_head
         private const string pythonExePath = @"C:\ProgramData\Anaconda3\python.exe";
         private const string pythonFile = @"C:\RobotReID\person_re_id-master\my_social_distance.py";
         private const string PYTHON_WORKING_DIR = @"C:\RobotReID\person_re_id-master\";
-        private const string EVIDENCE_FOLDER = @"C:\Evidences\Evidence.jpg";
+        private const string EVIDENCE_FOLDER = @"C:\RobotReID\SocialDistancingEvidences\Evidence.jpg";
         private const string WARNING_MESSAGE = "Please practice social " +
             "distancing for your own safety! At least 1 meter apart. Again, at least 1 " +
             "meter apart";
@@ -29,8 +29,8 @@ namespace robot_head
 
         public static bool IsDetected { get; internal set; }
 
-        public static readonly double MAX_DISTANCE_IN_CHARGE = 700;
-        public static readonly double MIN_DISTANCE_IN_CHARGE = 500;      
+        public static readonly double MAX_DISTANCE_IN_CHARGE = 400;
+        public static readonly double MIN_DISTANCE_IN_CHARGE = 100;      
         public static readonly int BEEP_PLAY_LOOP_TIME = 1;           
 
         #endregion
@@ -76,7 +76,7 @@ namespace robot_head
         #region Flow
         public static void StartChecking()
         {
-            Roving.Start();
+            //Roving.Start();
 
             ThreadHelper.StartNewThread(new Action(() => KeepReadingData()));
         }

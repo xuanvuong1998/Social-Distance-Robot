@@ -20,7 +20,7 @@ namespace robot_head
         [STAThread] 
         static void Main()
         {
-            SocialDistanceChecker.SaveEvidenceToServer(); while (true) { }
+            //SocialDistanceChecker.SaveEvidenceToServer(); while (true) { }
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MainForm());

@@ -338,7 +338,7 @@ namespace robot_head
                 rBase.Connect(GlobalData.ROS_IP);
                 rBase.Initialise(); 
                 rBase.NavigationStatusChanged += RBase_NavigationStatusChanged;
-                //rBase.GeneralMessageReceived += RBase_GeneralMessageReceived;
+                rBase.GeneralMessageReceived += RBase_GeneralMessageReceived;
             }
             catch (Exception ex)
             {
