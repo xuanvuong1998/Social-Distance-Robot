@@ -107,7 +107,7 @@ namespace robot_head
                     // Convert byte[] to Base64 String
                     string base64String = Convert.ToBase64String(imageBytes);
 
-                    SyncHelper.SaveEvidenceToServer(base64String);
+                    //SyncHelper.SaveEvidenceToServer(base64String);
                     //WebHelper.SaveEvidenceToServer(base64String);
                 }
             }
@@ -132,10 +132,6 @@ namespace robot_head
                     IsDetectedByLidar = false;
                     return;
                 }
-            }
-            else
-            {
-                return;
             }
             
             //Debug.WriteLine("DETECTED FROMCAMERA");
