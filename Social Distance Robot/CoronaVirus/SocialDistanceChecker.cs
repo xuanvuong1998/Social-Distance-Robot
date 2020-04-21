@@ -112,16 +112,18 @@ namespace robot_head
 
         private static void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
-            if (e.Data != null)
-            {
-                Debug.WriteLine(e.Data);
-            }
             
             if (IsDetected || IS_DETECTED_BY_LIDAR == false)
             {
                 return; 
             }
-            
+
+            //Debug.WriteLine("DETECTED FROMCAMERA");
+            if (e.Data != null)
+            {
+                Debug.WriteLine(e.Data);
+            }
+
             if (e.Data != null && e.Data == "social_distancing_warning")
             {
                 StartWarning();

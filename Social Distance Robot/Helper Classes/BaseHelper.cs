@@ -384,21 +384,19 @@ namespace robot_head
         {
 
             Debug.WriteLine("General Message Received: " + e.Message);
-            
-            
-            
-            if (SocialDistanceChecker.IS_DETECTED_BY_LIDAR == true)
-            {
-                double elapsedFromFirstLidarDetect =
-                (DateTime.Now - SocialDistanceChecker.LidarFirstDetectedTime).TotalSeconds;
+                     
+            //if (SocialDistanceChecker.IS_DETECTED_BY_LIDAR == true)
+            //{
+            //    double elapsedFromFirstLidarDetect =
+            //    (DateTime.Now - SocialDistanceChecker.LidarFirstDetectedTime).TotalSeconds;
 
-                if (elapsedFromFirstLidarDetect
-                    < SocialDistanceChecker.TIME_CHANCE_FOR_LIDAR)
-                {
-                    Debug.WriteLine("CAMERA IS CONFIRMING");
-                    return;
-                }
-            }
+            //    if (elapsedFromFirstLidarDetect
+            //        < SocialDistanceChecker.TIME_CHANCE_FOR_LIDAR)
+            //    {
+            //        Debug.WriteLine("CAMERA IS CONFIRMING");
+            //        return;
+            //    }
+            //}
 
             SocialDistanceChecker.IS_DETECTED_BY_LIDAR = false;
 
