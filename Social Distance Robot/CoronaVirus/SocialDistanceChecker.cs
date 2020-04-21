@@ -133,6 +133,10 @@ namespace robot_head
                     return;
                 }
             }
+            else
+            {
+                return;
+            }
             
             //Debug.WriteLine("DETECTED FROMCAMERA");
             if (e.Data != null)
