@@ -15,7 +15,7 @@ namespace robot_head
     {
         Timer timer = new Timer();
         
-        private const int TIMEOUT = 1000 * 17;
+        private const int TIMEOUT = 1000 * 12;
         public FrmWarning()
         {
             InitializeComponent();
