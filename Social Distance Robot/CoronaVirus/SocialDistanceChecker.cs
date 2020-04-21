@@ -21,6 +21,7 @@ namespace robot_head
         private const string WARNING_MESSAGE = "Please practice social " +
             "distancing for your own safety! At least 1 meter apart. Again, at least 1 " +
             "meter apart";
+        public static bool IS_DETECTED_BY_LIDAR = false;
         private const int DELAY_AFTER_WARNING = 1000 * 2; // miliseconds
 
         private static Process pythonProcess;
@@ -112,6 +113,12 @@ namespace robot_head
             {
                 Debug.WriteLine(e.Data);
             }
+            
+            if (IS_DETECTED_BY_LIDAR == false)
+            {
+                return;
+            }
+            
             if (e.Data != null && e.Data == "social_distancing_warning")
             {
                 StartWarning();

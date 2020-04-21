@@ -392,6 +392,7 @@ namespace robot_head
                 if (dis >= SocialDistanceChecker.MIN_DISTANCE_IN_CHARGE
                     && dis <= SocialDistanceChecker.MAX_DISTANCE_IN_CHARGE)
                 { 
+                    
                     SocialDistanceChecker.StartReminding();
                 }
             }

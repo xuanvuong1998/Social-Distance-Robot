@@ -26,7 +26,7 @@ DELAY_PER_FRAME = 0.02 #seconds
 
 MIN_CONFIDENCE_SCORE_REQUIRED = 0.5 #percent
 
-MIN_DETECTED_COUNT_REQUIRED = 3 #times min detect count per interval  (below)
+MIN_DETECTED_COUNT_REQUIRED = 2 #times min detect count per interval  (below)
 MAX_FRAME_CHECKING_TIME_INTERVAL = 6 #seconds  
 CAMERA_VIEW_RANGE_IN_PIXEL = 500 #pixel
 MAX_ALLOWED_DISTANCE = 90 #cm
@@ -114,23 +114,23 @@ class DetectorAPI:
 
 
 class cameraThread(threading.Thread):
-    def __init__(self, camID, depth_stream):
+    def __init__(self, camID):
         threading.Thread.__init__(self)
         self.camID = camID
-        self.depth_stream = depth_stream
+      
     def run(self):
         print ("Starting thread ")
-        loopDetecting(self.camID, self.depth_stream)
+        loopDetecting(self.camID)
         
 
 
-def loopDetecting(camID, d_stream):
+def loopDetecting(camID):
     cap = cv2.VideoCapture(camID)
     
     print("looping ")
     while True:    
         if (social_distance_detected == False): 
-            detectImage(cap, camID, d_stream)
+            detectImage(cap, camID)
 
         cont = wait(DELAY_PER_FRAME)
         
@@ -162,18 +162,13 @@ def isCloseEachOther(left, right):
         rightX1 = rightX2
         rightX2 = tmp
     
-    averageCmPerPixel = ((d1 + d2) / 2) / CAMERA_VIEW_RANGE_IN_PIXEL
     
-    
+    averageCmPerPixel = 0.342
+       
     xDelta = max(0, leftX2 - rightX1) * averageCmPerPixel
     xDelta += X_ERROR
-    dDelta = abs(d1 - d2) * (1 - DEPTH_ERROR);
-     
-    finalDis = round(math.sqrt(xDelta * xDelta + dDelta * dDelta))
     
-    print('Dis = ' + str(finalDis), end = " ** ")
-    
-    return finalDis < MAX_ALLOWED_DISTANCE
+    return xDelta < MAX_ALLOWED_DISTANCE   
     
 def findAnyPair(allDetectedPeople):
     for i in range(0, len(allDetectedPeople) - 1):
@@ -184,12 +179,11 @@ def findAnyPair(allDetectedPeople):
 
 
 
-def detectImage(cap, camID, depth_stream):
+def detectImage(cap, camID):
     
     r, img = cap.read()
     
-    #cv2.imwrite('C:\RobotReID\CapturedImages', img)
-    #img = cv2.resize(img, (1280, 720))
+  
     img = cv2.resize(img, (640, 480))
    
     im_h, im_w, _ = img.shape
@@ -220,6 +214,7 @@ def detectImage(cap, camID, depth_stream):
             x_output = int(boxes_cur[i][1] + (boxes_cur[i][3] - boxes_cur[i][1])/2)
             y_cen = int(boxes_cur[i][0] + (boxes_cur[i][2] - boxes_cur[i][0])/2)
             
+            '''
             # Grab a new depth frame
             frame = depth_stream.read_frame()       
             frame_data = frame.get_buffer_as_uint16()
@@ -239,12 +234,14 @@ def detectImage(cap, camID, depth_stream):
             x_mirror = int(im_w/2) + int(im_w/2 - x_output)
             z = img_d[y_cen][x_mirror]
             distance = round(z[0]/100)
+            '''
                               
-            if (distance > MIN_DEPTH_TO_CAMERA): 
-                detectedInfo.append((boxes_cur[i][1], boxes_cur[i][3], distance))
-                my_string += "(" + str(boxes_cur[i][1]) + ", " + str(boxes_cur[i][3]) + ", " + str(distance)+ ") , "
+            #if (distance > MIN_DEPTH_TO_CAMERA): 
+            distance = 100
+            detectedInfo.append((boxes_cur[i][1], boxes_cur[i][3], distance)) 
+            my_string += "(" + str(boxes_cur[i][1]) + ", " + str(boxes_cur[i][3]) + ", " + str(distance)+ ") , "
 
-                #cv2.putText(img,str(x_output) + " , " + str(distance) + "m",(30,50),cv2.FONT_HERSHEY_SIMPLEX,1,(0,0,255),2,cv2.LINE_AA)
+            #cv2.putText(img,str(x_output) + " , " + str(distance) + "m",(30,50),cv2.FONT_HERSHEY_SIMPLEX,1,(0,0,255),2,cv2.LINE_AA)
                    
         
         print(my_string, end = "=>>>> ", flush = True)
@@ -319,8 +316,10 @@ def detectSocialDistancing():
     printMessage("Start detecting")
     global odapi
    
+    
     depth_streams = []
-     
+    
+    '''
     for i in range(len(dev)):  
         
         #print(dev[i].get_device_info())
@@ -334,17 +333,29 @@ def detectSocialDistancing():
         
         depth_stream.start()
         depth_streams.append(depth_stream)
-
+    '''
     threads = []
     
+    '''
     print("depth stream started", flush=True)
     for i in range(len(depth_streams)):    
         thread = cameraThread(START_CAMERA_ID + i, depth_streams[i])
         thread.start()
         threads.append(thread) 
-        
+    
+  
     for t in threads:
         t.join()
+    '''
+    thread1 = cameraThread(2)
+    thread2 = cameraThread(3)
+
+    thread1.start()
+    thread2.start()
+
+    thread1.join()
+    thread2.join()
+    
         
 
 
@@ -356,7 +367,7 @@ if __name__ == "__main__":
     odapi = DetectorAPI(path_to_ckpt=MODEL_PATH)
     
     printMessage('after odapi')
-    openDepthCamera()
+    #openDepthCamera()
    
     detectSocialDistancing() 
     
