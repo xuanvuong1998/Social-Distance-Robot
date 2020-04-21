@@ -33,7 +33,11 @@ MAX_ALLOWED_DISTANCE = 90 #cm
 MIN_DEPTH_TO_CAMERA = 40 #cm
 WARNING_TIME_TOTAL = 17 #seconds
 X_ERROR = 10 #cm
-DEPTH_ERROR = 0.1 #percent
+DEPTH_ERROR = 0.1 #percent 
+CM_PER_PIXEL = 0.4 #cm 
+
+FRONT_CAM_ID = 3
+BACK_CAM_ID = 2
 
 
 ######################################
@@ -162,7 +166,7 @@ def isCloseEachOther(left, right):
         rightX2 = tmp
     
     
-    averageCmPerPixel = 0.342
+    averageCmPerPixel = CM_PER_PIXEL
        
     xDelta = max(0, leftX2 - rightX1) * averageCmPerPixel
     xDelta += X_ERROR
@@ -308,7 +312,7 @@ def saveEvidence(image):
     
 
 def sendWarningToWinForm(camID):
-    if (camID == 2):
+    if (camID == FRONT_CAM_ID):
         print('social_distancing_warning_front', flush=True)
     else:
         print('social_distancing_warning_back', flush=True)

@@ -114,12 +114,24 @@ namespace robot_head
 
         private static void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
-
-            if (IsDetected || IS_DETECTED_BY_LIDAR == false)
+            if (IsDetected)
             {
                 return;
             }
 
+            if (IS_DETECTED_BY_LIDAR)
+            {
+                var now = DateTime.Now;
+
+                var elapsed = (now - LidarFirstDetectedTime).TotalSeconds;
+
+                if (elapsed > TIME_CHANCE_FOR_LIDAR)
+                {
+                    IS_DETECTED_BY_LIDAR = false;
+                    return;
+                }
+            }
+            
             //Debug.WriteLine("DETECTED FROMCAMERA");
             if (e.Data != null)
             {

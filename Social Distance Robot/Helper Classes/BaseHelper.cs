@@ -399,7 +399,7 @@ namespace robot_head
             //}
 
             
-            SocialDistanceChecker.IS_DETECTED_BY_LIDAR = false;
+            //SocialDistanceChecker.IS_DETECTED_BY_LIDAR = false;
 
             if (e.Message.Contains("SocialDistanceDetected"))
             {
@@ -410,15 +410,17 @@ namespace robot_head
                 if (dis >= SocialDistanceChecker.MIN_DISTANCE_IN_CHARGE 
                     && dis <= SocialDistanceChecker.MAX_DISTANCE_IN_CHARGE)
                 {
+                    Debug.WriteLine("--------LIDAR DETECTED!------------");
                     if (xDetectedPos > 0)
                     {
+                        Debug.WriteLine("------FRONT CAMEREA---------");
                         SocialDistanceChecker.IsFrontDetected = true;
                     }
                     else
                     {
+                        Debug.WriteLine("------BACK CAMEREA---------");
                         SocialDistanceChecker.IsFrontDetected = false;
-                    }
-                    Debug.WriteLine("--------LIDAR DETECTED!------------");
+                    } 
                     SocialDistanceChecker.LidarFirstDetectedTime = DateTime.Now;
                     SocialDistanceChecker.IS_DETECTED_BY_LIDAR = true;                    
                 }
