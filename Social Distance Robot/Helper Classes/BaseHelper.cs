@@ -422,7 +422,7 @@ namespace robot_head
                         SocialDistanceChecker.IsFrontDetected = false;
                     } 
                     SocialDistanceChecker.LidarFirstDetectedTime = DateTime.Now;
-                    SocialDistanceChecker.IS_DETECTED_BY_LIDAR = true;                    
+                    SocialDistanceChecker.IsDetectedByLidar = true;                    
                 }
             }
 

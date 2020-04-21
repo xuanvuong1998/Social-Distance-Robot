@@ -21,7 +21,8 @@ namespace robot_head
         private const string WARNING_MESSAGE = "Please practice social " +
             "distancing for your own safety! At least 1 meter apart. Again, at least 1 " +
             "meter apart";
-        public static bool IS_DETECTED_BY_LIDAR = false;
+
+        public static bool IsDetectedByLidar { get; set; } = false; 
         private const int DELAY_AFTER_WARNING = 1000 * 2; // miliseconds
 
         public const double TIME_CHANCE_FOR_LIDAR = 1000 * 5;
@@ -116,18 +117,19 @@ namespace robot_head
         {
             if (IsDetected)
             {
-                return;
+                return; 
             }
 
-            if (IS_DETECTED_BY_LIDAR)
+            if (IsDetectedByLidar)
             {
+                Debug.WriteLine("Is detected by lidar = " + IsDetectedByLidar);
                 var now = DateTime.Now;
 
                 var elapsed = (now - LidarFirstDetectedTime).TotalSeconds;
 
                 if (elapsed > TIME_CHANCE_FOR_LIDAR)
                 {
-                    IS_DETECTED_BY_LIDAR = false;
+                    IsDetectedByLidar = false;
                     return;
                 }
             }
@@ -190,7 +192,7 @@ namespace robot_head
         public static void StartWarning()
         {
             if (IsDetected == true) return;
-            IsDetected = true;
+            IsDetected = true; 
             BaseHelper.CancelNavigation();
             Thread thread = new Thread(new ThreadStart(() =>
             {
@@ -222,8 +224,8 @@ namespace robot_head
               
             Wait(DELAY_AFTER_WARNING); 
 
-            IsDetected = false;
-            IS_DETECTED_BY_LIDAR = false;
+            IsDetected = false; 
+            IsDetectedByLidar = false;
 
         }
         #endregion
