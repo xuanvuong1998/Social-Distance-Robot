@@ -19,6 +19,8 @@ namespace robot_head
 
         public static readonly string TELEPRESENCE_URL
                 = @"https://scout-ngeeann.firebaseapp.com";
+        public static readonly string CEF_BINDING_NAME = "winformFuncAsync";
+
 
         public static readonly string ListeningModeImg = "wf.gif";
         public static readonly string TeleModeImg = "telemode.png";

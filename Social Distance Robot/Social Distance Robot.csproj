@@ -116,6 +116,9 @@
     <Reference Include="LiteDB, Version=4.1.4.0, Culture=neutral, PublicKeyToken=4ee40123013c9f27, processorArchitecture=MSIL">
       <HintPath>..\packages\LiteDB.4.1.4\lib\net40\LiteDB.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.AspNet.SignalR.Client, Version=2.4.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.SignalR.Client.2.4.1\lib\net45\Microsoft.AspNet.SignalR.Client.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Bot.Connector.DirectLine, Version=3.0.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Bot.Connector.DirectLine.3.0.2\lib\net45\Microsoft.Bot.Connector.DirectLine.dll</HintPath>
     </Reference>
@@ -218,6 +221,7 @@
     <Compile Include="Helper Classes\CameraHelper.cs" />
     <Compile Include="Helper Classes\DatabaseHelper.cs" />
     <Compile Include="Helper Classes\ExcelHelper.cs" />
+    <Compile Include="Helper Classes\SyncHelper.cs" />
     <Compile Include="Helper Classes\ThreadHelper.cs" />
     <Compile Include="Helper Classes\WebHelper.cs" />
     <Compile Include="MainForm.cs">

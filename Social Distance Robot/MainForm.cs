@@ -43,19 +43,12 @@ namespace robot_head
         }
         private void MainForm_Load(object sender, EventArgs e)
         {
-            pictureBox1.Hide(); 
+            pictureBox1.Hide();
             DisplayWebFace();           
-           
             InitUI(); 
             //DisplayRobotFace();
             InitSpeech();
-          
-            //ChatModule.Init();
-            //LoadAnnc();
-            //InitExcelHelper();
-            //ChatModule.Init();
-            //ChatModule.Start();
-
+         
             BaseHelper.Connect();
 
             SocialDistanceChecker.StartChecking();
@@ -87,8 +80,9 @@ namespace robot_head
 
         private void DisplayWebFace()
         {
-            RobotFaceBrowser.Load(GlobalData.TELEPRESENCE_URL, "winformFuncAsync", new TelepresenceControlHandler());
-
+            RobotFaceBrowser.Load(GlobalData.TELEPRESENCE_URL
+                , GlobalData.CEF_BINDING_NAME, new TelepresenceControlHandler());
+            
             //Add browser to the form
             this.Controls.Add(RobotFaceBrowser.browser);
 
@@ -105,7 +99,7 @@ namespace robot_head
             BaseHelper.CancelNavigation();
             BaseHelper.Stop();
 
-            //Environment.Exit(0);
+            Environment.Exit(0);
         }
 
         private void RestartApplication()

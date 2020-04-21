@@ -11,16 +11,20 @@ using System.Threading.Tasks;
 
 namespace robot_head
 {
-    public static class WebHelper
-    {
-        //private const string BASE_ADDRESS = "http://robo.sg/";
-        private const string BASE_ADDRESS = "http://robo-ta.com/";
+    public static class WebHelper 
+    { 
+        private const string BASE_ADDRESS = "http://robo.sg/";
+        //private const string BASE_ADDRESS = "http://robo-ta.com/";
         //private const string BASE_ADDRESS = "http://localhost:54297/";
         private const string ACCESS_TOKEN = "1H099XeDsRteM89yy91QonxH3mEd0DoE";
         private const string SaveEvidenceAPI = "api/ProcessImageAPI/SaveEvidence";
         private const string TestAPI = "api/ProcessImageAPI/DemoGet";
         private const string GETSTATUSAPI = "api/StatusApi/GetLessonStatus";
         private const string CLEARRESULT = "api/ResultsApi/ClearResults";
+        private const string TEST2 = "api/ResultsApi/SaveEvidence";
+        private const string TEST22 = "api/ProcessImageAPI/TestPost";
+            
+        private const string CHOOSEN_API = TEST22;
 
         public static async void GetStatus()
         {
@@ -81,7 +85,7 @@ namespace robot_head
                 client.BaseAddress = new Uri(BASE_ADDRESS);
 
                 using (var req = new HttpRequestMessage(
-                    HttpMethod.Post, CLEARRESULT))
+                    HttpMethod.Post, CHOOSEN_API))
                 {
                     req.Content = new StringContent(
                         JsonConvert.SerializeObject(s),
@@ -94,6 +98,10 @@ namespace robot_head
                         var res = await client.SendAsync(req).ConfigureAwait(false);
                         Debug.WriteLine("AFTER SENDING");
                         Debug.WriteLine(res.StatusCode);
+
+                        var respo = await res.Content.ReadAsStringAsync();
+
+                        Debug.WriteLine(respo.Substring(0, 20) + "---" + respo.Length);
                      
                     }
                     catch (Exception ex)
