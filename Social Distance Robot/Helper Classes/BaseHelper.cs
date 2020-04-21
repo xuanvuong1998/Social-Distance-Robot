@@ -398,6 +398,7 @@ namespace robot_head
             //    }
             //}
 
+            
             SocialDistanceChecker.IS_DETECTED_BY_LIDAR = false;
 
             if (e.Message.Contains("SocialDistanceDetected"))
