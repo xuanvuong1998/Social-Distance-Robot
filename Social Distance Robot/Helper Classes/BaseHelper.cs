@@ -381,7 +381,9 @@ namespace robot_head
         #region Message From ROS
         private static void RBase_GeneralMessageReceived(object sender, GeneralMessageEventArgs e)
         {
+            if (SocialDistanceChecker.IS_DETECTED_BY_LIDAR) return;
             Debug.WriteLine("General Message Received: " + e.Message);
+
 
             if (e.Message.Contains("SocialDistanceDetected"))
             {
@@ -391,9 +393,9 @@ namespace robot_head
 
                 if (dis >= SocialDistanceChecker.MIN_DISTANCE_IN_CHARGE
                     && dis <= SocialDistanceChecker.MAX_DISTANCE_IN_CHARGE)
-                { 
-                    
-                    SocialDistanceChecker.StartReminding();
+                {
+                    Debug.WriteLine("--------LIDAR DETECTED!------------");
+                    SocialDistanceChecker.IS_DETECTED_BY_LIDAR = true;                    
                 }
             }
 

@@ -30,8 +30,8 @@ namespace robot_head
 
         public static bool IsDetected { get; internal set; }
 
-        public static readonly double MAX_DISTANCE_IN_CHARGE = 700;
-        public static readonly double MIN_DISTANCE_IN_CHARGE = 500;      
+        public static readonly double MAX_DISTANCE_IN_CHARGE = 500;
+        public static readonly double MIN_DISTANCE_IN_CHARGE = 100;      
         public static readonly int BEEP_PLAY_LOOP_TIME = 1;           
 
         #endregion
@@ -114,15 +114,15 @@ namespace robot_head
                 Debug.WriteLine(e.Data);
             }
             
-            if (IS_DETECTED_BY_LIDAR == false)
+            if (IsDetected || IS_DETECTED_BY_LIDAR == false)
             {
-                return;
+                return; 
             }
             
             if (e.Data != null && e.Data == "social_distancing_warning")
             {
                 StartWarning();
-                //SaveEvidenceToServer();            
+                SaveEvidenceToServer();            
             }
             
         }
@@ -190,6 +190,7 @@ namespace robot_head
             Wait(DELAY_AFTER_WARNING); 
 
             IsDetected = false;
+            IS_DETECTED_BY_LIDAR = false;
 
         }
         #endregion
