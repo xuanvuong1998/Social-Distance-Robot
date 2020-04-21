@@ -48,9 +48,8 @@ social_distance_detected = False
 
 def printMessage(mess):
     print(mess, flush =True)
-
-def openDepthCamera():
     
+def openDepthCamera():
     print("opening depth camera", flush=True)
     global dev
     try:
@@ -271,7 +270,7 @@ def detectImage(cap, camID):
             if (detected_count == MIN_DETECTED_COUNT_REQUIRED):                                      
                 printMessage('----------DANGEROUS!!!!!!!!!!---------------')
                 saveEvidence(img)
-                sendWarningToWinForm()
+                sendWarningToWinForm(camID)
                 global social_distance_detected
                 social_distance_detected = True
                 time.sleep(WARNING_TIME_TOTAL)
@@ -308,8 +307,12 @@ def saveEvidence(image):
     cv2.imwrite(EVIDENCE_FOLDER_PATH + fileName, image)
     
 
-def sendWarningToWinForm():
-    print('social_distancing_warning', flush=True)
+def sendWarningToWinForm(camID):
+    if (camID == 2):
+        print('social_distancing_warning_front', flush=True)
+    else:
+        print('social_distancing_warning_back', flush=True)
+        
 
 def detectSocialDistancing():
     

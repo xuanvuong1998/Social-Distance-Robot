@@ -406,10 +406,18 @@ namespace robot_head
                 double dis = double.Parse(e.Message.Split(',')[3]);
                 double xDetectedPos = double.Parse(e.Message.Split(',')[1]);
                 double yDetectedPos = double.Parse(e.Message.Split(',')[2]);
-
-                if (dis >= SocialDistanceChecker.MIN_DISTANCE_IN_CHARGE
+                
+                if (dis >= SocialDistanceChecker.MIN_DISTANCE_IN_CHARGE 
                     && dis <= SocialDistanceChecker.MAX_DISTANCE_IN_CHARGE)
                 {
+                    if (xDetectedPos > 0)
+                    {
+                        SocialDistanceChecker.IsFrontDetected = true;
+                    }
+                    else
+                    {
+                        SocialDistanceChecker.IsFrontDetected = false;
+                    }
                     Debug.WriteLine("--------LIDAR DETECTED!------------");
                     SocialDistanceChecker.LidarFirstDetectedTime = DateTime.Now;
                     SocialDistanceChecker.IS_DETECTED_BY_LIDAR = true;                    

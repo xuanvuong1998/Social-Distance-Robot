@@ -24,7 +24,9 @@ namespace robot_head
         public static bool IS_DETECTED_BY_LIDAR = false;
         private const int DELAY_AFTER_WARNING = 1000 * 2; // miliseconds
 
-        public const double TIME_CHANCE_FOR_LIDAR = 1000 * 5; 
+        public const double TIME_CHANCE_FOR_LIDAR = 1000 * 5;
+
+        public static bool IsFrontDetected = true;
         public static DateTime LidarFirstDetectedTime;
         
         private static Process pythonProcess;
@@ -34,7 +36,7 @@ namespace robot_head
         public static bool IsDetected { get; internal set; }
 
         public static readonly double MAX_DISTANCE_IN_CHARGE = 500;
-        public static readonly double MIN_DISTANCE_IN_CHARGE = 100;      
+        public static readonly double MIN_DISTANCE_IN_CHARGE = 100;  
         public static readonly int BEEP_PLAY_LOOP_TIME = 1;           
 
         #endregion
@@ -112,22 +114,37 @@ namespace robot_head
 
         private static void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
-            
-            //if (IsDetected || IS_DETECTED_BY_LIDAR == false)
-            //{
-            //    return; 
-            //}
+
+            if (IsDetected || IS_DETECTED_BY_LIDAR == false)
+            {
+                return;
+            }
 
             //Debug.WriteLine("DETECTED FROMCAMERA");
             if (e.Data != null)
             {
                 Debug.WriteLine(e.Data);
             }
-
-            if (e.Data != null && e.Data == "social_distancing_warning")
+            
+            if (e.Data != null && e.Data.Contains("social_distancing_warning"))
             {
-                StartWarning();
-                SaveEvidenceToServer();            
+                if (e.Data == "social_distancing_warning_front"
+                    && IsFrontDetected)
+                {
+                    StartWarning();
+                    SaveEvidenceToServer();
+                }else if(e.Data == "social_distancing_warning_back"
+                    && IsFrontDetected == false)
+                {
+                    StartWarning();
+                    SaveEvidenceToServer(); 
+                }
+                else
+                {
+                    Debug.WriteLine("Ignore!!! not correct camera");
+                }
+                   
+
             }
             
         }
