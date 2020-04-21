@@ -24,6 +24,9 @@ namespace robot_head
         public static bool IS_DETECTED_BY_LIDAR = false;
         private const int DELAY_AFTER_WARNING = 1000 * 2; // miliseconds
 
+        public const double TIME_CHANCE_FOR_LIDAR = 1000 * 5; 
+        public static DateTime LidarFirstDetectedTime;
+        
         private static Process pythonProcess;
 
         private static FrmWarning frmWarning = new FrmWarning();
@@ -185,8 +188,7 @@ namespace robot_head
             AudioHelper.PlayAlarmSound();
 
             Synthesizer.Speak(WARNING_MESSAGE);
-  
-            
+              
             Wait(DELAY_AFTER_WARNING); 
 
             IsDetected = false;

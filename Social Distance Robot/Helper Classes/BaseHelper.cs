@@ -18,6 +18,7 @@ namespace robot_head
     {
         public static readonly double DEFAULT_LINEAR_SPEED = 0.2;
         public static readonly double DEFAULT_ANGULAR_SPEED = 0.3;
+        
 
         private static double linearSpeed;
 
@@ -381,9 +382,25 @@ namespace robot_head
         #region Message From ROS
         private static void RBase_GeneralMessageReceived(object sender, GeneralMessageEventArgs e)
         {
-            if (SocialDistanceChecker.IS_DETECTED_BY_LIDAR) return;
-            Debug.WriteLine("General Message Received: " + e.Message);
 
+            Debug.WriteLine("General Message Received: " + e.Message);
+            
+            
+            
+            if (SocialDistanceChecker.IS_DETECTED_BY_LIDAR == true)
+            {
+                double elapsedFromFirstLidarDetect =
+                (DateTime.Now - SocialDistanceChecker.LidarFirstDetectedTime).TotalSeconds;
+
+                if (elapsedFromFirstLidarDetect
+                    < SocialDistanceChecker.TIME_CHANCE_FOR_LIDAR)
+                {
+                    Debug.WriteLine("CAMERA IS CONFIRMING");
+                    return;
+                }
+            }
+
+            SocialDistanceChecker.IS_DETECTED_BY_LIDAR = false;
 
             if (e.Message.Contains("SocialDistanceDetected"))
             {
@@ -395,6 +412,7 @@ namespace robot_head
                     && dis <= SocialDistanceChecker.MAX_DISTANCE_IN_CHARGE)
                 {
                     Debug.WriteLine("--------LIDAR DETECTED!------------");
+                    SocialDistanceChecker.LidarFirstDetectedTime = DateTime.Now;
                     SocialDistanceChecker.IS_DETECTED_BY_LIDAR = true;                    
                 }
             }
