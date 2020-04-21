@@ -384,6 +384,12 @@ namespace robot_head
         {
 
             Debug.WriteLine("General Message Received: " + e.Message);
+
+            if (SocialDistanceChecker.IsDetected)
+            {
+                Debug.WriteLine("--------IGNORE LIDAR----ROBOT IS WARNING");
+                return;
+            }
                      
             //if (SocialDistanceChecker.IS_DETECTED_BY_LIDAR == true)
             //{

@@ -24,7 +24,7 @@ isVideoStreamedEnabled = True
 
 DELAY_PER_FRAME = 0.02 #seconds
 
-MIN_CONFIDENCE_SCORE_REQUIRED = 0.5 #percent
+MIN_CONFIDENCE_SCORE_REQUIRED = 0.6 #percent
 
 MIN_DETECTED_COUNT_REQUIRED = 2 #times min detect count per interval  (below)
 MAX_FRAME_CHECKING_TIME_INTERVAL = 6 #seconds  

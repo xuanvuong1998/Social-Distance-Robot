@@ -115,10 +115,10 @@ namespace robot_head
 
         private static void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
-            if (IsDetected)
+            if (IsDetected || IsDetectedByLidar == false)
             {
                 return; 
-            }
+            } 
 
             if (IsDetectedByLidar)
             {
@@ -133,7 +133,6 @@ namespace robot_head
                     return;
                 }
             }
-            else { return; }
             
             //Debug.WriteLine("DETECTED FROMCAMERA");
             if (e.Data != null)
