@@ -25,10 +25,10 @@ namespace robot_head
         public static bool IsDetectedByLidar { get; set; } = false; 
         private const int DELAY_AFTER_WARNING = 1000 * 2; // miliseconds
 
-        public const double TIME_CHANCE_FOR_LIDAR = 1000 * 5;
+        public const double CONFIRM_CHANCE_TIME = 1000 * 2;
 
         public static bool IsFrontDetected = true;
-        public static DateTime LidarFirstDetectedTime;
+        public static DateTime LidarFirstDetectedTime; 
         
         private static Process pythonProcess;
 
@@ -127,7 +127,7 @@ namespace robot_head
 
                 var elapsed = (now - LidarFirstDetectedTime).TotalSeconds;
 
-                if (elapsed > TIME_CHANCE_FOR_LIDAR)
+                if (elapsed > CONFIRM_CHANCE_TIME) 
                 {
                     IsDetectedByLidar = false;
                     return;
@@ -137,7 +137,7 @@ namespace robot_head
             //Debug.WriteLine("DETECTED FROMCAMERA");
             if (e.Data != null)
             {
-                Debug.WriteLine(e.Data);
+                Debug.WriteLine(e.Data); 
             }
             
             if (e.Data != null && e.Data.Contains("social_distancing_warning"))

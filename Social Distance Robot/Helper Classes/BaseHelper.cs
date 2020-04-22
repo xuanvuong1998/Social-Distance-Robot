@@ -432,30 +432,6 @@ namespace robot_head
                 }
             }
 
-            return;
-
-            Debug.WriteLine("cc");
-            var title = e.Message.Split('-')[0];
-            var data = e.Message.Split('-')[1];
-
-            if (title == "SocialDistanceDetected")
-            {
-                decimal xPos = decimal.Parse(data.Split(',')[0]); 
-                decimal yPos = decimal.Parse(data.Split(',')[1]); 
-
-                Debug.WriteLine("Detected from Lidar: " + xPos + "---" + yPos);
-
-                Synthesizer.SpeakAsync("Lidar detected some people are being close " +
-                    "each other. ");
-
-                Go(xPos, yPos, 0, 0);
-            }
-            else if (title == "DetectedCount")
-            {
-                Debug.WriteLine("Total detected people: " + data);
-
-                Synthesizer.SpeakAsync("Total detected people from Lidar is: " + data);
-            }
         }
 
         private static void RBase_NavigationStatusChanged(object o, NavigationStatusEventArgs e)

@@ -31,7 +31,7 @@ MAX_FRAME_CHECKING_TIME_INTERVAL = 6 #seconds
 CAMERA_VIEW_RANGE_IN_PIXEL = 500 #pixel
 MAX_ALLOWED_DISTANCE = 90 #cm
 MIN_DEPTH_TO_CAMERA = 40 #cm
-WARNING_TIME_TOTAL = 17 #seconds
+WARNING_TIME_TOTAL = 1 #seconds
 X_ERROR = 10 #cm
 DEPTH_ERROR = 0.1 #percent 
 CM_PER_PIXEL = 0.4 #cm 
@@ -363,8 +363,7 @@ def detectSocialDistancing():
     thread1.join()
     thread2.join()
     
-        
-
+    
 
 if __name__ == "__main__":
     
