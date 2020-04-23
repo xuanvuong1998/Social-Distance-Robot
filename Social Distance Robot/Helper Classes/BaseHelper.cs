@@ -379,6 +379,8 @@ namespace robot_head
 
         #endregion
 
+
+        
         #region Message From ROS
         private static void RBase_GeneralMessageReceived(object sender, GeneralMessageEventArgs e)
         {
@@ -407,7 +409,24 @@ namespace robot_head
             
             //SocialDistanceChecker.IS_DETECTED_BY_LIDAR = false;
 
-            if (e.Message.Contains("SocialDistanceDetected"))
+            if (e.Message.Contains("object_detected_depth"))
+            {
+                var firstComasIndex = e.Message.IndexOf(',');
+
+                string depths = e.Message.Substring(firstComasIndex + 1);
+
+                Debug.WriteLine("Depth received from ROS: " + depths);
+
+                bool res;
+                do
+                {
+                    res = FileHelper.WriteContentToFile(
+                        FileHelper.PYTHON_CSHARP_SHARING_FILE, depths);
+                } while (res == false);
+                
+            }
+
+            else if (e.Message.Contains("SocialDistanceDetected"))
             {
                 double dis = double.Parse(e.Message.Split(',')[3]);
                 double xDetectedPos = double.Parse(e.Message.Split(',')[1]);
@@ -454,6 +473,13 @@ namespace robot_head
 
         #endregion
 
+        #region People Detection
 
+        public static void SendDetectedAngleToROS(string angle)
+        {
+            rBase.SendDetectedAngle(angle);
+        }
+
+        #endregion
     }
 }

@@ -221,6 +221,7 @@
     <Compile Include="Helper Classes\CameraHelper.cs" />
     <Compile Include="Helper Classes\DatabaseHelper.cs" />
     <Compile Include="Helper Classes\ExcelHelper.cs" />
+    <Compile Include="Helper Classes\FileHelper.cs" />
     <Compile Include="Helper Classes\SyncHelper.cs" />
     <Compile Include="Helper Classes\ThreadHelper.cs" />
     <Compile Include="Helper Classes\WebHelper.cs" />

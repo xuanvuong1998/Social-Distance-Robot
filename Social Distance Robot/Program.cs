@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using DarrenLee.Media;
+using Newtonsoft.Json.Linq;
 using SpeechLibrary;
 
 namespace robot_head
@@ -20,6 +21,11 @@ namespace robot_head
         [STAThread] 
         static void Main()
         {
+            
+            //var x = JObject.Parse(jsonFormat);
+
+            
+
             //SocialDistanceChecker.SaveEvidenceToServer(); while (true) { }
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

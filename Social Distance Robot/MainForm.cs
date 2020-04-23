@@ -44,13 +44,16 @@ namespace robot_head
         private void MainForm_Load(object sender, EventArgs e)
         {
             pictureBox1.Hide();
-            DisplayWebFace();           
+            //DisplayWebFace();           
             InitUI(); 
-            //DisplayRobotFace();
+            DisplayRobotFace();
             InitSpeech();
          
             BaseHelper.Connect();
 
+            //BaseHelper.Move(0.4, 0.5);
+            //BaseHelper.SendDetectedAngleToROS(35.0);
+            
             SocialDistanceChecker.StartChecking();
         }
 
@@ -113,7 +116,9 @@ namespace robot_head
         {
             if (e.KeyData == Keys.Space)
             {
-                BaseHelper.Stop();
+                //MessageBox.Show("Test"); 
+                //BaseHelper.SendDetectedAngleToROS(15.6);
+                //BaseHelper.Stop();
             }
             if (e.KeyData == Keys.Enter)
             {

@@ -15,7 +15,7 @@ namespace robot_head
     {
         #region Properties
         private const string pythonExePath = @"C:\ProgramData\Anaconda3\python.exe";
-        private const string pythonFile = @"C:\RobotReID\person_re_id-master\my_social_distance.py";
+        private const string pythonFile = @"C:\RobotReID\person_re_id-master\my_social_distance_lidar.py";
         private const string PYTHON_WORKING_DIR = @"C:\RobotReID\person_re_id-master\";
         private const string EVIDENCE_FOLDER = @"C:\RobotReID\SocialDistancingEvidences\Evidence.jpg";
         private const string WARNING_MESSAGE = "Please practice social " +
@@ -38,7 +38,8 @@ namespace robot_head
 
         public static readonly double MAX_DISTANCE_IN_CHARGE = 500;
         public static readonly double MIN_DISTANCE_IN_CHARGE = 100;  
-        public static readonly int BEEP_PLAY_LOOP_TIME = 1;           
+        public static readonly int BEEP_PLAY_LOOP_TIME = 1;
+
 
         #endregion
 
@@ -75,7 +76,8 @@ namespace robot_head
                 pythonProcess.Kill();
             }
             catch
-            {              
+            {
+                
             }
         }
         #endregion
@@ -107,7 +109,7 @@ namespace robot_head
                     // Convert byte[] to Base64 String
                     string base64String = Convert.ToBase64String(imageBytes);
 
-                    //SyncHelper.SaveEvidenceToServer(base64String);
+                    SyncHelper.SaveEvidenceToServer(base64String);
                     //WebHelper.SaveEvidenceToServer(base64String);
                 }
             }
@@ -115,6 +117,7 @@ namespace robot_head
 
         private static void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
+            /*
             if (IsDetected || IsDetectedByLidar == false)
             {
                 return; 
@@ -132,16 +135,37 @@ namespace robot_head
                     IsDetectedByLidar = false;
                     return;
                 }
-            }
+            } */
             
+            if (IsDetected) return;
+
             //Debug.WriteLine("DETECTED FROMCAMERA");
             if (e.Data != null)
             {
-                Debug.WriteLine(e.Data); 
+                Debug.WriteLine(e.Data);
+            }
+            else
+            {
+                return;
             }
             
+            if (e.Data.Contains("x_angle"))
+            {
+
+                int firstComasIndex = e.Data.IndexOf(',');
+
+                string angles = e.Data.Substring(firstComasIndex + 1);
+                
+                BaseHelper.SendDetectedAngleToROS(angles);
+            }
+
             if (e.Data != null && e.Data.Contains("social_distancing_warning"))
             {
+
+                StartWarning();
+                SaveEvidenceToServer();
+                return;
+                
                 if (e.Data == "social_distancing_warning_front"
                     && IsFrontDetected)
                 {
@@ -193,7 +217,7 @@ namespace robot_head
         {
             if (IsDetected == true) return;
             IsDetected = true; 
-            BaseHelper.CancelNavigation();
+            //BaseHelper.CancelNavigation();
             Thread thread = new Thread(new ThreadStart(() =>
             {
                 frmWarning.ShowDialog();
