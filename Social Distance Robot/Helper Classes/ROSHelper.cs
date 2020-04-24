@@ -387,7 +387,7 @@ namespace robot_head
 
             Debug.WriteLine("General Message Received: " + e.Message);
 
-            if (PythonCSharpCommunicationHelper.IsDetected)
+            if (ViolationDetectionHelper.IsDetected)
             {
                 Debug.WriteLine("--------IGNORE LIDAR----ROBOT IS WARNING");
                 return;
@@ -410,30 +410,30 @@ namespace robot_head
                 
             }
 
-            else if (e.Message.Contains("SocialDistanceDetected"))
-            {
-                double dis = double.Parse(e.Message.Split(',')[3]);
-                double xDetectedPos = double.Parse(e.Message.Split(',')[1]);
-                double yDetectedPos = double.Parse(e.Message.Split(',')[2]);
+            //else if (e.Message.Contains("SocialDistanceDetected"))
+            //{
+            //    double dis = double.Parse(e.Message.Split(',')[3]);
+            //    double xDetectedPos = double.Parse(e.Message.Split(',')[1]);
+            //    double yDetectedPos = double.Parse(e.Message.Split(',')[2]);
                 
-                if (dis >= PythonCSharpCommunicationHelper.MIN_DISTANCE_IN_CHARGE 
-                    && dis <= PythonCSharpCommunicationHelper.MAX_DISTANCE_IN_CHARGE)
-                {
-                    Debug.WriteLine("--------LIDAR DETECTED!------------");
-                    if (xDetectedPos > 0)
-                    {
-                        Debug.WriteLine("------FRONT CAMEREA---------");
-                        PythonCSharpCommunicationHelper.IsFrontDetected = true;
-                    }
-                    else
-                    {
-                        Debug.WriteLine("------BACK CAMEREA---------");
-                        PythonCSharpCommunicationHelper.IsFrontDetected = false;
-                    } 
-                    PythonCSharpCommunicationHelper.LidarFirstDetectedTime = DateTime.Now;
-                    PythonCSharpCommunicationHelper.IsDetectedByLidar = true;                    
-                }
-            }
+            //    if (dis >= PythonCommunicationHelper.MIN_DISTANCE_IN_CHARGE 
+            //        && dis <= PythonCommunicationHelper.MAX_DISTANCE_IN_CHARGE)
+            //    {
+            //        Debug.WriteLine("--------LIDAR DETECTED!------------");
+            //        if (xDetectedPos > 0)
+            //        {
+            //            Debug.WriteLine("------FRONT CAMEREA---------");
+            //            PythonCommunicationHelper.IsFrontDetected = true;
+            //        }
+            //        else
+            //        {
+            //            Debug.WriteLine("------BACK CAMEREA---------");
+            //            PythonCommunicationHelper.IsFrontDetected = false;
+            //        } 
+            //        PythonCommunicationHelper.LidarFirstDetectedTime = DateTime.Now;
+            //        PythonCommunicationHelper.IsDetectedByLidar = true;                    
+            //    }
+            //}
 
         }
 

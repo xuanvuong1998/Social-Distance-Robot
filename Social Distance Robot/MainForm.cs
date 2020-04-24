@@ -50,11 +50,8 @@ namespace robot_head
             InitSpeech();
             
             ROSHelper.Connect();
-
-            //BaseHelper.Move(0.4, 0.5);
-            //BaseHelper.SendDetectedAngleToROS(35.0);
-            
-            PythonCSharpCommunicationHelper.StartChecking();
+           
+            PythonCommunicationHelper.StartChecking();
         }
 
         private void InitSpeech()
@@ -97,7 +94,7 @@ namespace robot_head
 
         private void MainForm_FormClosing_1(object sender, FormClosingEventArgs e)
         {
-            PythonCSharpCommunicationHelper.KillPython();
+            PythonCommunicationHelper.KillPython();
 
             ROSHelper.CancelNavigation();
             ROSHelper.Stop();

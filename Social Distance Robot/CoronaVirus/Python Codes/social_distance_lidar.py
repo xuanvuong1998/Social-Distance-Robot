@@ -14,32 +14,49 @@ from primesense import _openni2 as c_api
 #############CONSTANTS################
 
 MODEL_PATH = './ssd_inception_v2/frozen_inference_graph.pb'
-EVIDENCE_FOLDER_PATH = 'C:\RobotReID\SocialDistancingEvidences'
+EVIDENCE_FOLDER_PATH = 'C:/RobotReID/SocialDistancingEvidences'
 REDIST_FOLDER_PATH = 'C:/RobotReID/OpenNI2/OpenNI-Windows-x64-2.3.0.63/Redist'
+DEPTH_OUTPUT_FOLDER = "C:/RobotReID/Depth_Output/depth_value.txt"
 
-START_CAMERA_ID = 2
+#############CAMERA SETTINGS###############
 
-isVideoStreamedEnabled = True
+START_CAMERA_ID = 2 # 0, 1 are built-in windows cameras
+END_CAMERA_ID = 3
+FRONT_CAMERA_ID = 3
+BACK_CAMERA_ID = 2
 
-DELAY_PER_FRAME = 0.01 #seconds
+IMAGE_RESIZE_WIDTH = 640
+IMAGE_RESIZE_HEIGHT = 480
+IS_VIDEO_STREAMED_ENABLED = True
+CAMERA_DEGREE_RANGE = 60 #degreee
+LEFT_MOST_PIXEL = 65 #pixel
+RIGHT_MOST_PIXEL = 578 #pixel
+X_ERROR = 10 #cm
+
+ZERO_DEGREE_PIXEL = LEFT_MOST_PIXEL
+DEGREE_TO_PIXEL = (RIGHT_MOST_PIXEL - LEFT_MOST_PIXEL) / CAMERA_DEGREE_RANGE 
+ 
+CAMERA_PIXEL_RANGE = RIGHT_MOST_PIXEL - LEFT_MOST_PIXEL #pixel
+
+
+###########PEOPLE DECTION SETTINGS############
 
 MIN_CONFIDENCE_SCORE_REQUIRED = 0.5 #percent
+DELAY_PER_FRAME = 0.01 #seconds
+MIN_DETECTED_COUNT_REQUIRED = 1 #min times detected required per interval  (FRAME_CHECKING_INTERVAL)
+FRAME_CHECKING_INTERVAL = 5 #seconds 
 
-LEFT_MOST_PIXEL = 65
-RIGHT_MOST_PIXEL = 578
-ZERO_DEGREE_PIXEL = LEFT_MOST_PIXEL
-DEGREE_TO_PIXEL = 8.55 # 1 degree = 8.55
-MIN_DETECTED_COUNT_REQUIRED = 1 #times min detect count per interval  (below)
-MAX_FRAME_CHECKING_TIME_INTERVAL = 5 #seconds  
-CAMERA_VIEW_RANGE_IN_PIXEL = 500 #pixel
-MAX_ALLOWED_DISTANCE = 90 #cm
-MIN_DEPTH_TO_CAMERA = 40 #cm
-X_ERROR = 10 #cm
-DEPTH_ERROR = 0.1 #percent
-WARNING_TIME_TOTAL = 20 #seconds
-DEPTH_OUTPUT_FOLDER = "C:/RobotReID/Depth_Output/depth_value.txt"
-READ_DEPTH_FILE_INTERVAL = 0.4
-MAX_CHANCE_FOR_DEPTH_REQ = 10
+MAX_SOCIAL_DISTANCE_ALLOWED = 90 #cm
+MIN_DEPTH_DIS_REQUIRED = 40 #cm
+MAX_DEPTH_DIS_ACCEPTED = 1000 #cm 
+
+WARNING_TIME_TOTAL = 15 #seconds
+
+READ_DEPTH_DATA_INTERVAL = 0.4 #seconds (read depth from file per interval)
+READ_DEPTH_MAX_TRIES = 5 #times ->> Total time: READ_DEPTH_MAX_TRIES * READ_DEPTH_DATA_INTERVAL
+
+##############################################
+
 
 ######################################
 
@@ -68,7 +85,7 @@ def openDepthCamera():
         print("***Unable to open the device***")
             
 def wait(delayTime):
-    if (isVideoStreamedEnabled):       
+    if (IS_VIDEO_STREAMED_ENABLED):       
         key = cv2.waitKey(int(delayTime * 1000))   
         if key & 0xFF == ord('q'):
             return False
@@ -119,23 +136,20 @@ class DetectorAPI:
 
 
 class cameraThread(threading.Thread):
-    def __init__(self, camID, depth_stream):
+    def __init__(self, camID):
         threading.Thread.__init__(self)
         self.camID = camID
-        self.depth_stream = depth_stream
     def run(self):
         print ("Starting thread ")
-        loopDetecting(self.camID, self.depth_stream)
-        
+        loopDetecting(self.camID)       
 
-
-def loopDetecting(camID, d_stream):
+def loopDetecting(camID):
     cap = cv2.VideoCapture(camID)
     
     print("looping ")
     while True:    
         if (social_distance_detected == False): 
-            detectImage(cap, camID, d_stream)
+            detectImage(cap, camID)
 
         cont = wait(DELAY_PER_FRAME)
         
@@ -167,18 +181,27 @@ def isCloseEachOther(left, right):
         rightX1 = rightX2
         rightX2 = tmp
     
-    averageCmPerPixel = ((d1 + d2) / 2) / CAMERA_VIEW_RANGE_IN_PIXEL
-    
-    
+    '''
+    averageCmPerPixel = ((d1 + d2) / 2) / CAMERA_PIXEL_RANGE
+        
     xDelta = max(0, leftX2 - rightX1) * averageCmPerPixel
     xDelta += X_ERROR
-    dDelta = abs(d1 - d2) * (1 - DEPTH_ERROR);
+    dDelta = abs(d1 - d2)
      
     finalDis = round(math.sqrt(xDelta * xDelta + dDelta * dDelta))
+    '''
     
-    print('Dis = ' + str(finalDis), end = " ** ")
+    angleInDegree = CAMERA_DEGREE_RANGE - ((leftX2 - rightX1) + CAMERA_PIXEL_RANGE) / DEGREE_TO_PIXEL
     
-    return finalDis < MAX_ALLOWED_DISTANCE
+    angleInRad = angleInDegree * math.pi / 180 
+    
+    exactFinalDis = math.sqrt(d1 * d1 + d2 * d2 - 2 * d1 * d2 * math.cos(angleInRad))
+    
+    exactFinalDis = round(exactFinalDis)
+    
+    print('-------FINAL DISTANCE = ' + str(exactFinalDis) , end = " ** ")
+    
+    return exactFinalDis < MAX_SOCIAL_DISTANCE_ALLOWED
     
 def findAnyPair(allDetectedPeople):
     for i in range(0, len(allDetectedPeople) - 1):
@@ -189,13 +212,11 @@ def findAnyPair(allDetectedPeople):
 
 
 
-def detectImage(cap, camID, depth_stream):
+def detectImage(cap, camID):
     
     r, img = cap.read()
     
-    #cv2.imwrite('C:\RobotReID\CapturedImages', img)
-    #img = cv2.resize(img, (1280, 720))
-    img = cv2.resize(img, (640, 480))
+    img = cv2.resize(img, (IMAGE_RESIZE_WIDTH, IMAGE_RESIZE_HEIGHT))
    
     im_h, im_w, _ = img.shape
    
@@ -220,8 +241,7 @@ def detectImage(cap, camID, depth_stream):
     windowName = "Camera " + str(camID)
     showStreamingVideo(windowName, img)
     
-    if len(boxes_cur) > 0:
-      
+    if len(boxes_cur) > 0:    
         x_angles = ""
         for i in range(len(boxes_cur)):
 
@@ -237,14 +257,14 @@ def detectImage(cap, camID, depth_stream):
             
         print("x_angle," + x_angles, flush = True)
           
-        d = ""
+        d = "" 
                 
         wait_for_depth_vl_cnt = 0
         
         while len(d) == 0:     
             wait_for_depth_vl_cnt = wait_for_depth_vl_cnt + 1
             
-            if (wait_for_depth_vl_cnt >= 5):
+            if (wait_for_depth_vl_cnt >= READ_DEPTH_MAX_TRIES):
                 print('give up get depth val', flush = True)
                 break
             try:
@@ -252,9 +272,8 @@ def detectImage(cap, camID, depth_stream):
                 f = open(DEPTH_OUTPUT_FOLDER, "r+")
                 d = f.readline()
                 
-                #print("content in file " + d, flush = True)
                 f.close()
-                time.sleep(READ_DEPTH_FILE_INTERVAL)
+                time.sleep(READ_DEPTH_DATA_INTERVAL)
             except:
                 print('read file err')
          
@@ -275,21 +294,17 @@ def detectImage(cap, camID, depth_stream):
         #clear content inside
         
         if (len(d) == 0):
-            d = "-1"
+            return
         
         print('dis received from c# ' + d)
-              
-        if (d == "-1"):
-            print('!!!!not a corect distance!!!!!', flush = True)
-            return
-            
+                         
         dis = d.split(',')
      
         for i in range(len(boxes_cur)):
           
             distance = float(dis[i])
                               
-            if (distance > MIN_DEPTH_TO_CAMERA): 
+            if (distance > MIN_DEPTH_DIS_REQUIRED and distance < MAX_DEPTH_DIS_ACCEPTED): 
                 detectedInfo.append((boxes_cur[i][1], boxes_cur[i][3], distance))
                 my_string += "(" + str(boxes_cur[i][1]) + ", " + str(boxes_cur[i][3]) + ", " + str(distance)+ ") , "
 
@@ -310,7 +325,7 @@ def detectImage(cap, camID, depth_stream):
                 
                 timeDelta = (current_dectected_time - first_detected_time).total_seconds()
                               
-                if (timeDelta > MAX_FRAME_CHECKING_TIME_INTERVAL):
+                if (timeDelta > FRAME_CHECKING_INTERVAL):
                     printMessage("Time out! Reset from 1")
                     detected_count = 0
                             
@@ -340,22 +355,11 @@ def detectImage(cap, camID, depth_stream):
 def showStreamingVideo(windowsName, img):
     
     
-    if (isVideoStreamedEnabled):
+    if (IS_VIDEO_STREAMED_ENABLED):
         cv2.imshow(windowsName, img)
     
 def saveEvidence(image):
-    
-    #savedTime = datetime.datetime.now()
-    
-    #year = savedTime.year
-    #day = savedTime.day
-    #month = savedTime.month
-    #hour = savedTime.hour
-    #minute = savedTime.minute
-    #second = savedTime.second
-    
-    #fileName = str(year) + "_" + str(month) + "_" + str(day) + "..." + str(hour) + "h" + str(minute) + "m" + str(second) + "s"
-    
+      
     fileName = "Evidence.jpg"
     cv2.imwrite(EVIDENCE_FOLDER_PATH + fileName, image)
     
@@ -368,27 +372,11 @@ def detectSocialDistancing():
     printMessage("Start detecting")
     global odapi
    
-    depth_streams = []
-     
-    for i in range(len(dev)):  
-        
-        #print(dev[i].get_device_info())
-        
-        depth_stream = dev[i].create_depth_stream()
-        
-        depth_stream.set_video_mode(c_api.OniVideoMode(pixelFormat=c_api.OniPixelFormat.ONI_PIXEL_FORMAT_DEPTH_100_UM,
-                                                           resolutionX=640,
-                                                           resolutionY=480,
-                                                           fps=30))
-        
-        depth_stream.start()
-        depth_streams.append(depth_stream)
-
     threads = []
     
     print("depth stream started", flush=True)
-    for i in range(len(depth_streams)):    
-        thread = cameraThread(START_CAMERA_ID + i, depth_streams[i])
+    for i in range(START_CAMERA_ID, END_CAMERA_ID + 1):    
+        thread = cameraThread(i)
         thread.start()
         threads.append(thread) 
         
@@ -397,14 +385,14 @@ def detectSocialDistancing():
         
 
 if __name__ == "__main__":
-      
+     
     global odapi
     
     printMessage('before odapi')
     odapi = DetectorAPI(path_to_ckpt=MODEL_PATH)
     
     printMessage('after odapi')
-    openDepthCamera()
+    #openDepthCamera()
    
     detectSocialDistancing() 
     

@@ -199,28 +199,22 @@
     <Compile Include="Commons\GlobalData.cs" />
     <Compile Include="Commons\GlobalFlowControl.cs" />
     <Compile Include="Commons\SpeechGeneration.cs" />
-    <Compile Include="CoronaVirus\CameraTest.cs">
+    <Compile Include="CoronaVirus\ViolationDetectionHelper.cs" />
+    <Compile Include="CoronaVirus\Warning Forms\FrmMaskWarning.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CoronaVirus\CameraTest.Designer.cs">
-      <DependentUpon>CameraTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="CoronaVirus\ViolationHelper.cs" />
-    <Compile Include="CoronaVirus\FrmMaskWarning.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="CoronaVirus\FrmMaskWarning.Designer.cs">
+    <Compile Include="CoronaVirus\Warning Forms\FrmMaskWarning.Designer.cs">
       <DependentUpon>FrmMaskWarning.cs</DependentUpon>
     </Compile>
-    <Compile Include="CoronaVirus\FrmWarning.cs">
+    <Compile Include="CoronaVirus\Warning Forms\FrmWarning.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CoronaVirus\FrmWarning.Designer.cs">
+    <Compile Include="CoronaVirus\Warning Forms\FrmWarning.Designer.cs">
       <DependentUpon>FrmWarning.cs</DependentUpon>
     </Compile>
     <Compile Include="CoronaVirus\Roving.cs" />
-    <Compile Include="CoronaVirus\SaveEvidenceHelper.cs" />
-    <Compile Include="CoronaVirus\PythonCSharpCommunicationHelper.cs" />
+    <Compile Include="CoronaVirus\EvidenceHelper.cs" />
+    <Compile Include="CoronaVirus\PythonCommunicationHelper.cs" />
     <Compile Include="DataModel\AnswerTemplate.cs" />
     <Compile Include="DataModel\SynchronisationData.cs" />
     <Compile Include="FollowingPerson\FollowingPerson.cs" />
@@ -245,13 +239,10 @@
     <Compile Include="SchedulerServices\TelepresenceScheduler.cs" />
     <Compile Include="Telepresence\RobotFaceBrowser.cs" />
     <Compile Include="Telepresence\TelepresenceControlHandler.cs" />
-    <EmbeddedResource Include="CoronaVirus\CameraTest.resx">
-      <DependentUpon>CameraTest.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="CoronaVirus\FrmMaskWarning.resx">
+    <EmbeddedResource Include="CoronaVirus\Warning Forms\FrmMaskWarning.resx">
       <DependentUpon>FrmMaskWarning.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="CoronaVirus\FrmWarning.resx">
+    <EmbeddedResource Include="CoronaVirus\Warning Forms\FrmWarning.resx">
       <DependentUpon>FrmWarning.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
@@ -282,7 +273,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="CoronaVirus\my_social_distance.py" />
+    <Content Include="CoronaVirus\Python Codes\social_distance_lidar.py" />
+    <Content Include="CoronaVirus\Python Codes\social_distancing_camera.py" />
+    <Content Include="CoronaVirus\Python Codes\social_distancing_lidar_mask_detection_camera.py" />
     <Content Include="Database\RobotLocation.accdb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -336,6 +329,7 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

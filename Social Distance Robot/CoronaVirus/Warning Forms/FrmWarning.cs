@@ -28,7 +28,7 @@ namespace robot_head
 
         private void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            if (PythonCSharpCommunicationHelper.IsDetected)
+            if (ViolationDetectionHelper.IsDetected)
             {
                 timer.Stop();
                 HideForm();

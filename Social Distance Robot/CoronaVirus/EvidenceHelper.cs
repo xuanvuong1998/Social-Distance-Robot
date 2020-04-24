@@ -5,7 +5,7 @@ using System.IO;
 
 namespace robot_head
 {
-    class SaveEvidenceHelper
+    class EvidenceHelper
     {
         private const string SOCIAL_DIS_VIOLATION_EVIDENCE_FOLDER = @"C:\RobotReID\SocialDistancingEvidences\Evidence.jpg";
         private const string MASK_VIOLATION_EVIDENCE_FOLDER = @"C:\RobotReID\MaskViolationEvidences\Evidence.jpg";
@@ -13,10 +13,10 @@ namespace robot_head
         public static void SaveEvidenceToServer(string violation_type)
         {
             string path = null;
-            if (violation_type == ViolationHelper.SOCIAL_DISTANCING_VIOLATION)
+            if (violation_type == ViolationDetectionHelper.SOCIAL_DISTANCING_VIOLATION)
             {
                 path = SOCIAL_DIS_VIOLATION_EVIDENCE_FOLDER;
-            }else if (violation_type == ViolationHelper.MASK_VIOLATION)
+            }else if (violation_type == ViolationDetectionHelper.MASK_VIOLATION)
             {
                 path = MASK_VIOLATION_EVIDENCE_FOLDER;
             }

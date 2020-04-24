@@ -126,9 +126,7 @@ namespace robot_head
 
         public static void SendToBase(SynchronisationData data)
         {
-
             LattePandaCommunication.SendObjectAsJson(data);
-
         }
         
     }

@@ -19,7 +19,7 @@ namespace robot_head
             {
                 while (true)
                 {                      
-                    if (PythonCSharpCommunicationHelper.IsDetected == false)
+                    if (ViolationDetectionHelper.IsDetected == false)
                     {
                         Console.Write("Robot is moving");
                         curLocationIndex = (curLocationIndex + 1) % (rovingLocations.Length);
