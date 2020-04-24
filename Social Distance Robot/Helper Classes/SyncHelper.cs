@@ -42,10 +42,21 @@ namespace robot_head
             _myHub.Invoke("Notify", CLIENT_NAME, _hubConnection.ConnectionId);
         }
             
-        public static void SaveEvidenceToServer(string base64StringImage)
+
+
+        public static void SaveEvidenceToServer(string base64StringImage, string violationType)
         {
-            _myHub.Invoke<string>(SAVE_EVIDENCE_METHOD, 
-                        base64StringImage);
+            try
+            {
+                
+                _myHub.Invoke<string>(SAVE_EVIDENCE_METHOD,
+                        base64StringImage, violationType); 
+            }
+            catch
+            {
+                Debug.WriteLine("");              
+            }
+            
         }
 
         

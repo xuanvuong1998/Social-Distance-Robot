@@ -24,7 +24,6 @@ namespace robot_head
             
             //var x = JObject.Parse(jsonFormat);
 
-            
 
             //SocialDistanceChecker.SaveEvidenceToServer(); while (true) { }
             Application.EnableVisualStyles();

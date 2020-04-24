@@ -15,12 +15,9 @@ namespace robot_head
             try
             {
                 using (System.IO.StreamWriter file =
-               new System.IO.StreamWriter(fileName))
+                new System.IO.StreamWriter(fileName))
                 {
-
-
                     file.WriteLine(content);
-
                 };
 
                 return true;

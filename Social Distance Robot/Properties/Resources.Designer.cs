@@ -63,6 +63,16 @@ namespace robot_head.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap facial_mask_warning {
+            get {
+                object obj = ResourceManager.GetObject("facial_mask_warning", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap robot_face {
             get {
                 object obj = ResourceManager.GetObject("robot_face", resourceCulture);

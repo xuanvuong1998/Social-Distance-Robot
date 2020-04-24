@@ -11,24 +11,31 @@ using Timer = System.Timers.Timer;
 
 namespace robot_head
 {
-    public partial class FrmWarning : Form
+    public partial class FrmMaskWarning : Form
     {
         Timer timer = new Timer();
-        
-        public FrmWarning()
+       
+        private void InitUI()
         {
-            InitializeComponent();
             this.WindowState = FormWindowState.Maximized;
             this.FormBorderStyle = FormBorderStyle.None;
-           
+            
+        }
+        public FrmMaskWarning()
+        {
+            InitializeComponent();
+
+            InitUI();
+
             timer.Interval = 1000;
             timer.AutoReset = true;
             timer.Elapsed += Timer_Elapsed;
+            
         }
 
         private void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            if (PythonCSharpCommunicationHelper.IsDetected)
+            if (PythonCSharpCommunicationHelper.IsDetected == false)
             {
                 timer.Stop();
                 HideForm();
@@ -47,11 +54,14 @@ namespace robot_head
             }
         }
 
-        private void FrmWarning_Shown(object sender, EventArgs e)
+        private void FrmMaskWarning_Shown(object sender, EventArgs e)
         {
             pictureBox1.Location = new Point(0, 0);
             pictureBox1.Size = this.Size;
+
             timer.Start();
+
+            
         }
     }
 }

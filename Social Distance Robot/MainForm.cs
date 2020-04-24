@@ -15,7 +15,7 @@ namespace robot_head
         
         public void InitUI()
         {
-            FormBorderStyle = FormBorderStyle.None;
+            //FormBorderStyle = FormBorderStyle.None;
             WindowState = FormWindowState.Maximized;            
             // Top Most : Don't use TopMost property. It will freeze your UI
         }
@@ -46,15 +46,15 @@ namespace robot_head
             pictureBox1.Hide();
             //DisplayWebFace();           
             InitUI(); 
-            DisplayRobotFace();
+            DisplayRobotFace(); 
             InitSpeech();
-         
-            BaseHelper.Connect();
+            
+            ROSHelper.Connect();
 
             //BaseHelper.Move(0.4, 0.5);
             //BaseHelper.SendDetectedAngleToROS(35.0);
             
-            SocialDistanceChecker.StartChecking();
+            PythonCSharpCommunicationHelper.StartChecking();
         }
 
         private void InitSpeech()
@@ -97,10 +97,10 @@ namespace robot_head
 
         private void MainForm_FormClosing_1(object sender, FormClosingEventArgs e)
         {
-            SocialDistanceChecker.KillPython();
+            PythonCSharpCommunicationHelper.KillPython();
 
-            BaseHelper.CancelNavigation();
-            BaseHelper.Stop();
+            ROSHelper.CancelNavigation();
+            ROSHelper.Stop();
 
             Environment.Exit(0);
         }
@@ -114,22 +114,21 @@ namespace robot_head
 
         private void MainForm_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyData == Keys.Space)
-            {
-                //MessageBox.Show("Test"); 
-                //BaseHelper.SendDetectedAngleToROS(15.6);
-                //BaseHelper.Stop();
-            }
-            if (e.KeyData == Keys.Enter)
-            {
-                GlobalFlowControl.Robot.IsFollowing = false;
-                BaseHelper.Stop();
-            }
+            //if (e.KeyData == Keys.Space)
+            //{
+            //    string angles = "20,24,27,29,33,35";
+            //    ROSHelper.SendDetectedAngleToROS(angles);
+            //}
+            //if (e.KeyData == Keys.Enter)
+            //{
+            //    GlobalFlowControl.Robot.IsFollowing = false;
+            //    ROSHelper.Stop();
+            //}
 
-            if (e.KeyData == Keys.R)
-            {
-                RestartApplication();
-            }
+            //if (e.KeyData == Keys.R)
+            //{
+            //    RestartApplication();
+            //}
         }
     }
 }

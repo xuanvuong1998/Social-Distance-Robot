@@ -19,11 +19,11 @@ namespace robot_head
             {
                 while (true)
                 {                      
-                    if (SocialDistanceChecker.IsDetected == false)
+                    if (PythonCSharpCommunicationHelper.IsDetected == false)
                     {
                         Console.Write("Robot is moving");
                         curLocationIndex = (curLocationIndex + 1) % (rovingLocations.Length);
-                        BaseHelper.GoUntilReachedGoalOrCanceled(rovingLocations[curLocationIndex]);
+                        ROSHelper.GoUntilReachedGoalOrCanceled(rovingLocations[curLocationIndex]);
                         Console.WriteLine("Reached goal! Waiting for next location");
                         ThreadHelper.Wait(NEXT_GOAL_DELAY);
                     } 

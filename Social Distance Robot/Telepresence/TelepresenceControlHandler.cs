@@ -36,19 +36,19 @@ namespace robot_head
                     GlobalFlowControl.SendToBase(msg[0], msg[1]);
                     break;
                 case "Navigation":
-                    BaseHelper.GoUntilReachedGoalOrCanceled(msg[1]);
+                    ROSHelper.GoUntilReachedGoalOrCanceled(msg[1]);
                     break;
                 case "Gesture":  
                     break;
                 case "BaseMovement":
 
-                    BaseHelper.DoBaseMovements(msg[1]);
+                    ROSHelper.DoBaseMovements(msg[1]);
                    
                     //GlobalFlowControl.SendToBase(msg[0], msg[1]);
                     break;
                 case "EndCall":
                     GlobalFlowControl.TelepresenceMode = false;
-                    BaseHelper.Stop();
+                    ROSHelper.Stop();
                     //GlobalFlowControl.SendToBase("Telepresence", "quit");                                                            
                     break;
             }

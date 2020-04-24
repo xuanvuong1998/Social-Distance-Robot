@@ -41,7 +41,7 @@ namespace robot_head
             Debug.WriteLine("Linear : " + linearSpeed + ", " +
                     "Angular: " + angularSpeed);
 
-            BaseHelper.Move(linearSpeed, angularSpeed * flag); 
+            ROSHelper.Move(linearSpeed, angularSpeed * flag); 
             // -1: in ROS, negative means left, positive means right
         }
 

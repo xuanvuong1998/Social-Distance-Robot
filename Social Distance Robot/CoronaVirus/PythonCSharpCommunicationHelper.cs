@@ -11,28 +11,29 @@ using System.IO;
 
 namespace robot_head
 {
-    class SocialDistanceChecker
+    class PythonCSharpCommunicationHelper
     {
         #region Properties
         private const string pythonExePath = @"C:\ProgramData\Anaconda3\python.exe";
-        private const string pythonFile = @"C:\RobotReID\person_re_id-master\my_social_distance_lidar.py";
+        //private const string pythonFile = @"C:\RobotReID\person_re_id-master\my_social_distance_lidar.py";
+        private const string pythonFile = @"C:\RobotReID\person_re_id-master\SocialDistancing_MaskDetection.py";
         private const string PYTHON_WORKING_DIR = @"C:\RobotReID\person_re_id-master\";
         private const string EVIDENCE_FOLDER = @"C:\RobotReID\SocialDistancingEvidences\Evidence.jpg";
-        private const string WARNING_MESSAGE = "Please practice social " +
-            "distancing for your own safety! At least 1 meter apart. Again, at least 1 " +
-            "meter apart";
+        
+       
 
-        public static bool IsDetectedByLidar { get; set; } = false; 
+        public static bool IsDetectedByLidar { get; set; } = false;
         private const int DELAY_AFTER_WARNING = 1000 * 2; // miliseconds
 
         public const double CONFIRM_CHANCE_TIME = 1000 * 2;
 
-        public static bool IsFrontDetected = true;
-        public static DateTime LidarFirstDetectedTime; 
+        public static bool IsFrontDetected { get; set; } = true;
+        public static DateTime LidarFirstDetectedTime { get; set; } 
         
         private static Process pythonProcess;
 
         private static FrmWarning frmWarning = new FrmWarning();
+        private static FrmMaskWarning frmMaskWarning = new FrmMaskWarning();
 
         public static bool IsDetected { get; internal set; }
 
@@ -94,26 +95,7 @@ namespace robot_head
      
         #region Events
 
-        public static void SaveEvidenceToServer()
-        {
-            string Path = EVIDENCE_FOLDER; 
-            using (Image image = Image.FromFile(Path))
-            {
-                using (MemoryStream m = new MemoryStream())
-                {
-                    image.Save(m, image.RawFormat);
-                    byte[] imageBytes = m.ToArray(); 
-
-                    Console.WriteLine(imageBytes.Length);
-                    
-                    // Convert byte[] to Base64 String
-                    string base64String = Convert.ToBase64String(imageBytes);
-
-                    SyncHelper.SaveEvidenceToServer(base64String);
-                    //WebHelper.SaveEvidenceToServer(base64String);
-                }
-            }
-        }
+       
 
         private static void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
@@ -136,10 +118,9 @@ namespace robot_head
                     return;
                 }
             } */
-            
+
             if (IsDetected) return;
 
-            //Debug.WriteLine("DETECTED FROMCAMERA");
             if (e.Data != null)
             {
                 Debug.WriteLine(e.Data);
@@ -151,21 +132,17 @@ namespace robot_head
             
             if (e.Data.Contains("x_angle"))
             {
-
                 int firstComasIndex = e.Data.IndexOf(',');
-
+                    
                 string angles = e.Data.Substring(firstComasIndex + 1);
                 
-                BaseHelper.SendDetectedAngleToROS(angles);
-            }
-
-            if (e.Data != null && e.Data.Contains("social_distancing_warning"))
-            {
-
-                StartWarning();
-                SaveEvidenceToServer();
-                return;
+                ROSHelper.SendDetectedAngleToROS(angles);
+            }else if (e.Data.Contains("social_distancing_warning"))
+            {               
+                StartWarning(ViolationHelper.SOCIAL_DISTANCING_VIOLATION);
+                SaveEvidenceHelper.SaveEvidenceToServer(ViolationHelper.SOCIAL_DISTANCING_VIOLATION);
                 
+                /*
                 if (e.Data == "social_distancing_warning_front"
                     && IsFrontDetected)
                 {
@@ -181,8 +158,12 @@ namespace robot_head
                 {
                     Debug.WriteLine("Ignore!!! not correct camera");
                 }
+                */
                    
-
+            }else if (e.Data.Contains("facial_mask_violation"))
+            {
+                StartWarning(ViolationHelper.MASK_VIOLATION);
+                SaveEvidenceHelper.SaveEvidenceToServer(ViolationHelper.MASK_VIOLATION);
             }
             
         }
@@ -213,19 +194,33 @@ namespace robot_head
             Task.Factory.StartNew(new Action(() => Remind()));
         }
 
-        public static void StartWarning()
+        public static void StartWarning(string violationType)
         {
             if (IsDetected == true) return;
             IsDetected = true; 
             //BaseHelper.CancelNavigation();
-            Thread thread = new Thread(new ThreadStart(() =>
+
+            if (violationType == ViolationHelper.MASK_VIOLATION)
             {
-                frmWarning.ShowDialog();
-            })); 
+                Thread thread = new Thread(new ThreadStart(() =>
+                { 
+                    frmMaskWarning.ShowDialog();
+                }));
 
-            thread.Start();
+                thread.Start();
+            }
+            else
+            {
+                Thread thread = new Thread(new ThreadStart(() =>
+                {
+                    frmWarning.ShowDialog();
+                }));
 
-            Task.Factory.StartNew(new Action(() => WarningTarget()));
+                thread.Start();
+            }
+            
+
+            Task.Factory.StartNew(new Action(() => WarningTarget(violationType)));
 
         }
 
@@ -236,17 +231,19 @@ namespace robot_head
                 AudioHelper.PlayRemindSound();
                 AudioHelper.PlayRemindSound();
                 AudioHelper.PlayRemindSound();
-                Synthesizer.Speak(WARNING_MESSAGE);
+                //Synthesizer.Speak(WARNING_MESSAGE);
             }
             IsDetected = false;
         }
-        private static void WarningTarget()
+        private static void WarningTarget(string warningType)
         {
+            
             AudioHelper.PlayAlarmSound();
 
-            Synthesizer.Speak(WARNING_MESSAGE);
+            Synthesizer.Speak(ViolationHelper.GetWarningMessageByType(warningType));
               
             Wait(DELAY_AFTER_WARNING); 
+            
 
             IsDetected = false; 
             IsDetectedByLidar = false;

@@ -16,7 +16,6 @@ namespace robot_head
         public static readonly string Voice3 = ConfigurationManager.AppSettings["Voice 3"];
         public static readonly string Voice4 = ConfigurationManager.AppSettings["Voice 4"];
 
-
         public static readonly string TELEPRESENCE_URL
                 = @"https://scout-ngeeann.firebaseapp.com";
         public static readonly string CEF_BINDING_NAME = "winformFuncAsync";

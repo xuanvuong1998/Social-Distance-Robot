@@ -205,6 +205,13 @@
     <Compile Include="CoronaVirus\CameraTest.Designer.cs">
       <DependentUpon>CameraTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="CoronaVirus\ViolationHelper.cs" />
+    <Compile Include="CoronaVirus\FrmMaskWarning.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CoronaVirus\FrmMaskWarning.Designer.cs">
+      <DependentUpon>FrmMaskWarning.cs</DependentUpon>
+    </Compile>
     <Compile Include="CoronaVirus\FrmWarning.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -212,12 +219,13 @@
       <DependentUpon>FrmWarning.cs</DependentUpon>
     </Compile>
     <Compile Include="CoronaVirus\Roving.cs" />
-    <Compile Include="CoronaVirus\SocialDistanceChecker.cs" />
+    <Compile Include="CoronaVirus\SaveEvidenceHelper.cs" />
+    <Compile Include="CoronaVirus\PythonCSharpCommunicationHelper.cs" />
     <Compile Include="DataModel\AnswerTemplate.cs" />
     <Compile Include="DataModel\SynchronisationData.cs" />
     <Compile Include="FollowingPerson\FollowingPerson.cs" />
     <Compile Include="Helper Classes\AudioHelper.cs" />
-    <Compile Include="Helper Classes\BaseHelper.cs" />
+    <Compile Include="Helper Classes\ROSHelper.cs" />
     <Compile Include="Helper Classes\CameraHelper.cs" />
     <Compile Include="Helper Classes\DatabaseHelper.cs" />
     <Compile Include="Helper Classes\ExcelHelper.cs" />
@@ -239,6 +247,9 @@
     <Compile Include="Telepresence\TelepresenceControlHandler.cs" />
     <EmbeddedResource Include="CoronaVirus\CameraTest.resx">
       <DependentUpon>CameraTest.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CoronaVirus\FrmMaskWarning.resx">
+      <DependentUpon>FrmMaskWarning.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="CoronaVirus\FrmWarning.resx">
       <DependentUpon>FrmWarning.cs</DependentUpon>
@@ -291,6 +302,7 @@
     <Content Include="dlls\ROSHelper.dll" />
     <Content Include="dlls\SpeechLibrary.dll" />
     <Content Include="images\danger.PNG" />
+    <Content Include="images\facial_mask_warning.jpg" />
     <Content Include="images\socialDistancing.PNG" />
     <Content Include="media\Alarm1.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

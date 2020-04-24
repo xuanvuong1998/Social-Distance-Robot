@@ -14,7 +14,7 @@ using Timer = System.Timers.Timer;
 
 namespace robot_head
 {
-    public class BaseHelper
+    public class ROSHelper
     {
         public static readonly double DEFAULT_LINEAR_SPEED = 0.2;
         public static readonly double DEFAULT_ANGULAR_SPEED = 0.3;
@@ -49,7 +49,7 @@ namespace robot_head
         private static Timer rBaseStopTimer = new Timer();
         private static readonly double METER_PER_ROUND = 1.27484;
         
-        static BaseHelper()
+        static ROSHelper()
         {
             rBaseStopTimer.Interval = 1000;
             rBaseStopTimer.Elapsed += RBaseStopTimer_Elapsed;
@@ -387,27 +387,11 @@ namespace robot_head
 
             Debug.WriteLine("General Message Received: " + e.Message);
 
-            if (SocialDistanceChecker.IsDetected)
+            if (PythonCSharpCommunicationHelper.IsDetected)
             {
                 Debug.WriteLine("--------IGNORE LIDAR----ROBOT IS WARNING");
                 return;
             }
-                     
-            //if (SocialDistanceChecker.IS_DETECTED_BY_LIDAR == true)
-            //{
-            //    double elapsedFromFirstLidarDetect =
-            //    (DateTime.Now - SocialDistanceChecker.LidarFirstDetectedTime).TotalSeconds;
-
-            //    if (elapsedFromFirstLidarDetect
-            //        < SocialDistanceChecker.TIME_CHANCE_FOR_LIDAR)
-            //    {
-            //        Debug.WriteLine("CAMERA IS CONFIRMING");
-            //        return;
-            //    }
-            //}
-
-            
-            //SocialDistanceChecker.IS_DETECTED_BY_LIDAR = false;
 
             if (e.Message.Contains("object_detected_depth"))
             {
@@ -432,22 +416,22 @@ namespace robot_head
                 double xDetectedPos = double.Parse(e.Message.Split(',')[1]);
                 double yDetectedPos = double.Parse(e.Message.Split(',')[2]);
                 
-                if (dis >= SocialDistanceChecker.MIN_DISTANCE_IN_CHARGE 
-                    && dis <= SocialDistanceChecker.MAX_DISTANCE_IN_CHARGE)
+                if (dis >= PythonCSharpCommunicationHelper.MIN_DISTANCE_IN_CHARGE 
+                    && dis <= PythonCSharpCommunicationHelper.MAX_DISTANCE_IN_CHARGE)
                 {
                     Debug.WriteLine("--------LIDAR DETECTED!------------");
                     if (xDetectedPos > 0)
                     {
                         Debug.WriteLine("------FRONT CAMEREA---------");
-                        SocialDistanceChecker.IsFrontDetected = true;
+                        PythonCSharpCommunicationHelper.IsFrontDetected = true;
                     }
                     else
                     {
                         Debug.WriteLine("------BACK CAMEREA---------");
-                        SocialDistanceChecker.IsFrontDetected = false;
+                        PythonCSharpCommunicationHelper.IsFrontDetected = false;
                     } 
-                    SocialDistanceChecker.LidarFirstDetectedTime = DateTime.Now;
-                    SocialDistanceChecker.IsDetectedByLidar = true;                    
+                    PythonCSharpCommunicationHelper.LidarFirstDetectedTime = DateTime.Now;
+                    PythonCSharpCommunicationHelper.IsDetectedByLidar = true;                    
                 }
             }
 
