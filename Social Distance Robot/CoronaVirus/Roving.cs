@@ -1,28 +1,52 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-    
+using System.Diagnostics;
+
 namespace robot_head
 {
     class Roving
     {
-        private const int NEXT_GOAL_DELAY = 500;
+        private const int NEXT_GOAL_DELAY = 1000 * 3;
+        public static bool NavigationIncompleted { get; set; } = false;
+        private static bool _isPausing { get; set; } = false;
+
+        public static void Pause()
+        {
+            _isPausing = true; 
+            ROSHelper.CancelNavigation();
+        }
+
+        public static void Resume()
+        {
+            _isPausing = false;
+        }
+        public static void Stop()
+        {
+            GlobalData.RovingEnable = false;
+        }
         public static void Start()
         {
             var rovingLocations = DatabaseHelper.LocationDespDB.GetRovingLocations();
 
+            Debug.WriteLine("Location");
+            foreach (var lo in rovingLocations)
+            {
+                Debug.WriteLine(lo);
+            }
             int curLocationIndex = -1;
 
             Action action = new Action(() =>
             {
-                while (true)
-                {                      
-                    if (ViolationDetectionHelper.IsDetected == false)
+                while (GlobalData.RovingEnable)
+                {
+                    if (_isPausing == false
+                        && GlobalFlowControl.TelepresenceMode == false)
                     {
-                        Console.Write("Robot is moving");
-                        curLocationIndex = (curLocationIndex + 1) % (rovingLocations.Length);
+                        if (NavigationIncompleted == false)
+                        {
+                            curLocationIndex = (curLocationIndex + 1) % (rovingLocations.Length);
+                        }
+                        Console.WriteLine("Robot is moving to " + rovingLocations[curLocationIndex]);
+
                         ROSHelper.GoUntilReachedGoalOrCanceled(rovingLocations[curLocationIndex]);
                         Console.WriteLine("Reached goal! Waiting for next location");
                         ThreadHelper.Wait(NEXT_GOAL_DELAY);

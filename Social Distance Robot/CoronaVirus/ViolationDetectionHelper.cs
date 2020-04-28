@@ -17,7 +17,7 @@ namespace robot_head
         public const string MASK_VIOLATION_WARNING_MESSAGE
                 = "For your own safety, please wear your mask";
 
-        public const string SOCIAL_DIS_WARNING_MESSAGE = "Please practice social " +
+        public const string SOCIAL_DIS_WARNING_MESSAGE = "Please practice safe " +
             "distancing for your own safety! At least 1 meter apart. Again, at least 1 " +
             "meter apart";
 
@@ -38,9 +38,15 @@ namespace robot_head
         public static bool IsFrontDetected { get; set; } = true;
         public static bool IsDetected { get; internal set; }
 
-        private static FrmWarning frmWarning = new FrmWarning();
-        private static FrmMaskWarning frmMaskWarning = new FrmMaskWarning();
+        private static FrmWarning frmWarning;
+        private static FrmMaskWarning frmMaskWarning;
 
+        public static void InitForms()
+        {
+            frmWarning = new FrmWarning();
+            frmMaskWarning = new FrmMaskWarning();
+        }
+        
         public static string GetWarningMessageByType(string type)
         {
             if (type == MASK_VIOLATION) return MASK_VIOLATION_WARNING_MESSAGE;
@@ -58,6 +64,14 @@ namespace robot_head
             IsDetected = true;
            
             Task.Factory.StartNew(new Action(() => Remind(violationType)));
+        }
+
+        public static void AskPersonGiveWay()
+        {
+            Roving.Pause();
+            Synthesizer.Speak(". Please give way for me, thank you for " +
+                "your understanding");
+            Roving.Resume();
         }
 
         public static void StartWarning(string violationType)

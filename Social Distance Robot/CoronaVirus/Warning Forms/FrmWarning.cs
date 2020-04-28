@@ -28,7 +28,7 @@ namespace robot_head
 
         private void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            if (ViolationDetectionHelper.IsDetected)
+            if (ViolationDetectionHelper.IsDetected == false)
             {
                 timer.Stop();
                 HideForm();

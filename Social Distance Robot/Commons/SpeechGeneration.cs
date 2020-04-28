@@ -53,10 +53,7 @@ namespace robot_head
             speechSyn.Speak(msg);
         }
 
-        public static void SpeakInBody(string msg)
-        {
-            GlobalFlowControl.SendToBase("Speech", msg);
-        }
+     
 
         internal static void Stop()
         {

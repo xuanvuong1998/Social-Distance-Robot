@@ -60,8 +60,6 @@ namespace robot_head
             pictureBox1.Size = this.Size;
 
             timer.Start();
-
-            
         }
     }
 }

@@ -26,7 +26,7 @@ namespace robot_head
             {
                 return false;
             }
-           
+
         }
     }
 }

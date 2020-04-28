@@ -137,7 +137,7 @@
     </Reference>
     <Reference Include="Robot, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>dlls\Robot.dll</HintPath>
+      <HintPath>..\..\..\..\..\Desktop\VUONG\Robotx64\Robot\bin\x64\Debug\Robot.dll</HintPath>
     </Reference>
     <Reference Include="rosbridge_client_common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -192,9 +192,6 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChatBot\ChatModule.cs" />
-    <Compile Include="ChatBot\DirectLineClient.cs" />
-    <Compile Include="ChatBot\SpeechRecognition.cs" />
     <Compile Include="Commons\ConversationGlobalFlow.cs" />
     <Compile Include="Commons\GlobalData.cs" />
     <Compile Include="Commons\GlobalFlowControl.cs" />
@@ -285,11 +282,6 @@
     <Content Include="Database\RobotSettings.accdb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="dlls\AForge.dll" />
-    <Content Include="dlls\AForge.Video.DirectShow.dll" />
-    <Content Include="dlls\AForge.Video.dll" />
-    <Content Include="dlls\DarrenLee.Media.dll" />
-    <Content Include="dlls\Robot.dll" />
     <Content Include="dlls\rosbridge_client_common.dll" />
     <Content Include="dlls\rosbridge_client_socket_for_desktop.dll" />
     <Content Include="dlls\ROSHelper.dll" />

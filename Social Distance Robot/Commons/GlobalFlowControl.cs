@@ -79,55 +79,7 @@ namespace robot_head
             }
         }
 
+        public static bool TelepresenceMode { get; set; } = false;
 
-        public static bool moduleActivated = false;
-
-        public static bool AskByPressingButton = false;
-
-        public static bool TelepresenceMode = false;
-
-        public static bool ListeningMode = false;
-
-        public static bool IsReachedGoal = false;
-
-        public static bool IsCancelledNavigation = false;
-
-        public static bool IsRoving = false;
-
-        public static bool IsNavigationInChatBot = false;
-
-        public static bool DataOk = false;
-
-        public static bool ChatbotInterrupted = false;
-
-        public static bool ChatBotDisabledByBody = false;
-
-        public static SynchronisationData LatestData = null;
-
-        public static void SendToBase(string header, string msg)
-        {
-            SynchronisationData syncData = SynchronisationData.PackDataSingle(header, msg);
-            LatestData = syncData;
-            LattePandaCommunication.SendObjectAsJson(syncData);
-        }
-
-        public static void SendToBase(string msg)
-        {
-            LattePandaCommunication.Send(msg);
-        }
-     
-        public static void SendToBaseAgain()
-        {
-            if (LatestData != null)
-            {
-                LattePandaCommunication.SendObjectAsJson(LatestData);
-            }            
-        }
-
-        public static void SendToBase(SynchronisationData data)
-        {
-            LattePandaCommunication.SendObjectAsJson(data);
-        }
-        
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Newtonsoft.Json;
@@ -12,52 +13,77 @@ namespace robot_head
     public partial class MainForm : Form
     {
         private static Timer savingTimer = new Timer();
-        
+        private const int ROS_CONNECT_DELAY = 1000 * 2; 
+
         public void InitUI()
         {
-            //FormBorderStyle = FormBorderStyle.None;
-            WindowState = FormWindowState.Maximized;            
+            pictureBox1.Hide();
+            FormBorderStyle = FormBorderStyle.None;
+            WindowState = FormWindowState.Maximized;
             // Top Most : Don't use TopMost property. It will freeze your UI
         }
-        public void ActivateChatBot()
-        {
-            if (GlobalFlowControl.moduleActivated) return;            
-            Task.Run(() => ChatModule.Start()).ConfigureAwait(false);
-        }
-
+ 
         public MainForm()
         {
             InitializeComponent();
+
+            //InitUI();
+            
         }
 
         private void LoadAnnc()
-        {
+        {          
             TelepresenceControlHandler.LoadDailyAnnouncement();
         }
 
         private void DisplayRobotFace()
         {
+            pictureBox1.Enabled = true;
             pictureBox1.Show();
             pictureBox1.Location = new System.Drawing.Point(0, 0);
             pictureBox1.Size = this.Size;
         }
+
+        private void MainForm_Shown(object sender, EventArgs e)
+        {
+        }
+
         private void MainForm_Load(object sender, EventArgs e)
         {
-            pictureBox1.Hide();
-            //DisplayWebFace();           
-            InitUI(); 
-            DisplayRobotFace(); 
-            InitSpeech();
+
+            if (GlobalData.TelepresenceEnabled)
+            {
+                DisplayWebFace();
+            }
             
-            ROSHelper.Connect();
-           
+            InitUI();
+
+            ViolationDetectionHelper.InitForms();
             PythonCommunicationHelper.StartChecking();
+                      
+             
+            if (GlobalData.TelepresenceEnabled == false)
+            {
+                DisplayRobotFace();
+            }
+            
+            InitSpeech();
+
+            ROSHelper.Connect();
+
+            Thread.Sleep(ROS_CONNECT_DELAY);
+            
+            if (GlobalData.RovingEnable)
+            {
+                Roving.Start();
+            }
+           
         }
 
         private void InitSpeech()
         {
             Synthesizer.SelectVoiceByName(GlobalData.Voice2);
-            
+
         }
 
         private void InitExcelHelper()
@@ -67,7 +93,6 @@ namespace robot_head
             savingTimer.AutoReset = true;
             savingTimer.Elapsed += SavingTimer_Elapsed;
             savingTimer.Start();
-            
         }
 
         private void SavingTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -82,7 +107,7 @@ namespace robot_head
         {
             RobotFaceBrowser.Load(GlobalData.TELEPRESENCE_URL
                 , GlobalData.CEF_BINDING_NAME, new TelepresenceControlHandler());
-            
+
             //Add browser to the form
             this.Controls.Add(RobotFaceBrowser.browser);
 
@@ -95,11 +120,14 @@ namespace robot_head
         private void MainForm_FormClosing_1(object sender, FormClosingEventArgs e)
         {
             PythonCommunicationHelper.KillPython();
-
             ROSHelper.CancelNavigation();
             ROSHelper.Stop();
+            ROSHelper.Disconnect();
+
+            Roving.Stop();
 
             Environment.Exit(0);
+            //Application.Exit();
         }
 
         private void RestartApplication()
@@ -113,8 +141,7 @@ namespace robot_head
         {
             //if (e.KeyData == Keys.Space)
             //{
-            //    string angles = "20,24,27,29,33,35";
-            //    ROSHelper.SendDetectedAngleToROS(angles);
+            //    ROSHelper.SendDetectedAngleToROS("20,30,40.5");
             //}
             //if (e.KeyData == Keys.Enter)
             //{
@@ -127,5 +154,7 @@ namespace robot_head
             //    RestartApplication();
             //}
         }
+
+      
     }
 }

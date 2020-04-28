@@ -33,7 +33,6 @@ namespace robot_head
                     break;
                 case "GuidedTour": 
                     StartGuidedTour(msg[1]);
-                    GlobalFlowControl.SendToBase(msg[0], msg[1]);
                     break;
                 case "Navigation":
                     ROSHelper.GoUntilReachedGoalOrCanceled(msg[1]);
@@ -41,33 +40,25 @@ namespace robot_head
                 case "Gesture":  
                     break;
                 case "BaseMovement":
-
                     ROSHelper.DoBaseMovements(msg[1]);
-                   
-                    //GlobalFlowControl.SendToBase(msg[0], msg[1]);
                     break;
                 case "EndCall":
                     GlobalFlowControl.TelepresenceMode = false;
                     ROSHelper.Stop();
-                    //GlobalFlowControl.SendToBase("Telepresence", "quit");                                                            
+                    Roving.Resume();
                     break;
             }
         }
 
         private void StartGuidedTour(string status)
         {                        
-            if (status == "StartTour")
-            {
-                ChatModule.End();
-            }
+            
         }
 
         private void StartCall()
         {
             GlobalFlowControl.TelepresenceMode = true;
-            GlobalFlowControl.IsRoving = false;
-            //ChatModule.End();            
-            //GlobalFlowControl.SendToBase("Telepresence", "StartTele");
+            Roving.Pause();
         }
 
         public static void LoadDailyAnnouncement()
@@ -182,10 +173,9 @@ namespace robot_head
 
         private void InterpretText(string text)
         {
-            Synthesizer.Speak(text);
-            //SpeechGeneration.SpeakAsync(text);
-            //SpeechGeneration.SpeakInBody(text); 
-     
+            text = ". ." + text;
+ 
+            Synthesizer.Speak(text);     
         }
 
         

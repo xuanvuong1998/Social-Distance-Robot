@@ -17,16 +17,14 @@ namespace robot_head
     public class ROSHelper
     {
         public static readonly double DEFAULT_LINEAR_SPEED = 0.2;
-        public static readonly double DEFAULT_ANGULAR_SPEED = 0.3;
-        
+        public static readonly double DEFAULT_ANGULAR_SPEED = 0.2;
+
 
         private static double linearSpeed;
 
-        public static double LinearSpeed
-        {
+        public static double LinearSpeed {
             get { return linearSpeed; }
-            set
-            {
+            set {
                 linearSpeed = value;
                 rBase.LinearSpeed = value;
             }
@@ -34,11 +32,9 @@ namespace robot_head
 
         private static double angularSpeed;
 
-        public static double AngularSpeed
-        {
+        public static double AngularSpeed {
             get { return angularSpeed; }
-            set
-            {
+            set {
                 angularSpeed = value;
                 rBase.AngularSpeed = value;
             }
@@ -48,7 +44,7 @@ namespace robot_head
         private static Base rBase = new Base();
         private static Timer rBaseStopTimer = new Timer();
         private static readonly double METER_PER_ROUND = 1.27484;
-        
+
         static ROSHelper()
         {
             rBaseStopTimer.Interval = 1000;
@@ -58,7 +54,7 @@ namespace robot_head
             AngularSpeed = DEFAULT_ANGULAR_SPEED;
             LinearSpeed = DEFAULT_LINEAR_SPEED;
         }
-        
+
         #region Locations
 
         public static List<string> GetAllLocations()
@@ -82,7 +78,7 @@ namespace robot_head
         private static void RBaseStopTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             Stop();
-            
+
         }
 
         static void WaitToStop(double time)
@@ -100,16 +96,21 @@ namespace robot_head
 
         #region spinning       
 
-        public static void TurnLeft()
+        public static void MoveOne(double linearSpeed, double angularSpeed)
         {
-            //Move(ROS.BaseDirection.ANTICLOCKWISE);
+            //Move(linearSpeed, angularSpeed);
+            rBase.MoveOne(linearSpeed, angularSpeed); 
+        }
 
-            rBase.Move(0, rBase.AngularSpeed);
+        public static void TurnLeft()
+        {          
+            //rBase.Move(0, rBase.AngularSpeed);
+            MoveOne(0, rBase.AngularSpeed);
         }
 
         public static void TurnRight()
         {
-            rBase.Move(0, -rBase.AngularSpeed);
+            MoveOne(0, -rBase.AngularSpeed);
         }
         public static void TurnLeft(int rounds)
         {
@@ -154,7 +155,7 @@ namespace robot_head
         #region Moves
         public static void Forward()
         {
-            rBase.Move(rBase.LinearSpeed, 0);
+            MoveOne(rBase.LinearSpeed, 0);
         }
 
         /// <summary>
@@ -206,12 +207,13 @@ namespace robot_head
 
         public static void Backward()
         {
-            rBase.Move(-rBase.LinearSpeed, 0);
+            MoveOne(-rBase.LinearSpeed, 0);
         }
 
         public static void Move(double linearSpeed, double angularSpeed)
         {
-            rBase.Move(linearSpeed, angularSpeed);
+            MoveOne(linearSpeed, angularSpeed);
+            //rBase.Move(linearSpeed, angularSpeed);
         }
         #endregion
 
@@ -285,16 +287,21 @@ namespace robot_head
         }
 
         public static bool IsReachedGoal() => GetNavigationStatus() == "Goal reached.";
-        
+
         public static string GetNavigationStatus()
         {
             return ROS.DataList[ROSTopic.NAVIGATION_STATUS].Data;
         }
         static public void CancelNavigation()
         {
-            //rBase.Stop();
-            //Stop();
-            rBase.CancelNavigation();
+            try
+            {
+                rBase.CancelNavigation();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
         }
         static public void Go(string location)
         {
@@ -304,11 +311,12 @@ namespace robot_head
 
                 rBase.Go(location);
             }
-            catch {
+            catch
+            {
                 GlobalFlowControl.Navigation.Reset();
             }
         }
-        
+
         static public void Go(decimal x, decimal y, decimal z, decimal w)
         {
             rBase.Go(new BotLocation(x, y, z, w));
@@ -328,7 +336,7 @@ namespace robot_head
             }
         }
 
-   
+
         #endregion
 
         #region Setup
@@ -337,17 +345,16 @@ namespace robot_head
             try
             {
                 rBase.Connect(GlobalData.ROS_IP);
-                rBase.Initialise(); 
+                rBase.Initialise();
                 rBase.NavigationStatusChanged += RBase_NavigationStatusChanged;
                 rBase.GeneralMessageReceived += RBase_GeneralMessageReceived;
             }
             catch (Exception ex)
             {
-                throw ex;
+                Debug.WriteLine(ex.Message);
             }
         }
 
-       
 
         static public void Disconnect()
         {
@@ -358,9 +365,10 @@ namespace robot_head
         #region Cores
         static public void Stop()
         {
-            rBase.Move(0, 0); // Set linear and angular speed to zero
-            //rBase.Stop();
-            rBaseStopTimer.Stop(); 
+            MoveOne(0, 0);
+
+            CancelNavigation();
+            rBaseStopTimer.Stop();
         }
 
         static public void Move(ROS.BaseDirection direction)
@@ -379,17 +387,14 @@ namespace robot_head
 
         #endregion
 
-
-        
         #region Message From ROS
         private static void RBase_GeneralMessageReceived(object sender, GeneralMessageEventArgs e)
         {
-
             Debug.WriteLine("General Message Received: " + e.Message);
-
+            
             if (ViolationDetectionHelper.IsDetected)
             {
-                Debug.WriteLine("--------IGNORE LIDAR----ROBOT IS WARNING");
+                Debug.WriteLine("--- ROBOT IS WARNING");
                 return;
             }
 
@@ -406,34 +411,10 @@ namespace robot_head
                 {
                     res = FileHelper.WriteContentToFile(
                         FileHelper.PYTHON_CSHARP_SHARING_FILE, depths);
+                    ThreadHelper.Wait(50);
                 } while (res == false);
-                
-            }
 
-            //else if (e.Message.Contains("SocialDistanceDetected"))
-            //{
-            //    double dis = double.Parse(e.Message.Split(',')[3]);
-            //    double xDetectedPos = double.Parse(e.Message.Split(',')[1]);
-            //    double yDetectedPos = double.Parse(e.Message.Split(',')[2]);
-                
-            //    if (dis >= PythonCommunicationHelper.MIN_DISTANCE_IN_CHARGE 
-            //        && dis <= PythonCommunicationHelper.MAX_DISTANCE_IN_CHARGE)
-            //    {
-            //        Debug.WriteLine("--------LIDAR DETECTED!------------");
-            //        if (xDetectedPos > 0)
-            //        {
-            //            Debug.WriteLine("------FRONT CAMEREA---------");
-            //            PythonCommunicationHelper.IsFrontDetected = true;
-            //        }
-            //        else
-            //        {
-            //            Debug.WriteLine("------BACK CAMEREA---------");
-            //            PythonCommunicationHelper.IsFrontDetected = false;
-            //        } 
-            //        PythonCommunicationHelper.LidarFirstDetectedTime = DateTime.Now;
-            //        PythonCommunicationHelper.IsDetectedByLidar = true;                    
-            //    }
-            //}
+            }
 
         }
 
@@ -441,15 +422,17 @@ namespace robot_head
         {
             if (e.Status == "Goal reached.")
             {
+                Roving.NavigationIncompleted = false;
                 GlobalFlowControl.Navigation.ReachedGoal = true;
-
             }
             else if (e.Status.Length == 0)
             {
+                Roving.NavigationIncompleted = false;
                 GlobalFlowControl.Navigation.Canceled = true;
             }
             else
             {
+                Roving.NavigationIncompleted = false;
                 GlobalFlowControl.Navigation.Stucked = true;
             }
 

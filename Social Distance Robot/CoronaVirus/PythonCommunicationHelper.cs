@@ -29,6 +29,7 @@ namespace robot_head
         #region Properties
         private const string PYTHON_EXE_PATH = @"C:\ProgramData\Anaconda3\python.exe";
 
+        //private const string ACTIVE_PYTHON_FILE = DETECT_SOCIAL_DIS_AND_MASK_BY_CAMERA_LIDAR;
         private const string ACTIVE_PYTHON_FILE = DETECT_SOCIAL_DIS_AND_MASK_BY_CAMERA_LIDAR;
 
         private static Process pythonProcess;
@@ -76,10 +77,11 @@ namespace robot_head
 
         #region Flow
         public static void StartChecking()
-        {
-            //Roving.Start();
-
-            ThreadHelper.StartNewThread(new Action(() => KeepReadingData()));
+        {            
+            if (GlobalData.SocialDistanceDetectionEnabled)
+            {
+                ThreadHelper.StartNewThread(new Action(() => KeepReadingData()));
+            }
         }
 
         #endregion
@@ -107,7 +109,12 @@ namespace robot_head
                 string angles = e.Data.Substring(firstComasIndex + 1);
                 
                 ROSHelper.SendDetectedAngleToROS(angles);
-            }else if (e.Data.Contains("social_distancing_warning"))
+            }
+            else if (e.Data.Contains("person_too_close_to_robot"))
+            {
+                ViolationDetectionHelper.AskPersonGiveWay();
+            }
+            else if (e.Data.Contains("social_distancing_warning"))
             {               
                 ViolationDetectionHelper.StartWarning(
                     ViolationDetectionHelper.SOCIAL_DISTANCING_VIOLATION);

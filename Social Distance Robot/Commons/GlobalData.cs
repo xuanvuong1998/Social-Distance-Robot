@@ -10,7 +10,9 @@ namespace robot_head
 {
     public class GlobalData
     {
-
+        public static bool TelepresenceEnabled { get; set; } = false;
+        public static bool SocialDistanceDetectionEnabled { get; set; } = false;
+        public static bool RovingEnable { get; set; } = true; 
         public static readonly string Voice1 = ConfigurationManager.AppSettings["Voice 1"];
         public static readonly string Voice2 = ConfigurationManager.AppSettings["Voice 2"];
         public static readonly string Voice3 = ConfigurationManager.AppSettings["Voice 3"];
