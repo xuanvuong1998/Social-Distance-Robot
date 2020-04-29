@@ -126,7 +126,7 @@ namespace robot_head
 
             Roving.Stop();
 
-            Environment.Exit(0);
+            //Environment.Exit(0);
             //Application.Exit();
         }
 

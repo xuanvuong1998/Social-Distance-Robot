@@ -137,7 +137,7 @@
     </Reference>
     <Reference Include="Robot, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Desktop\VUONG\Robotx64\Robot\bin\x64\Debug\Robot.dll</HintPath>
+      <HintPath>dlls\Robot.dll</HintPath>
     </Reference>
     <Reference Include="rosbridge_client_common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -282,13 +282,14 @@
     <Content Include="Database\RobotSettings.accdb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="dlls\Robot.dll" />
     <Content Include="dlls\rosbridge_client_common.dll" />
     <Content Include="dlls\rosbridge_client_socket_for_desktop.dll" />
     <Content Include="dlls\ROSHelper.dll" />
     <Content Include="dlls\SpeechLibrary.dll" />
     <Content Include="images\danger.PNG" />
     <Content Include="images\facial_mask_warning.jpg" />
-    <Content Include="images\socialDistancing.PNG" />
+    <Content Include="images\socialDistancing.jpg" />
     <Content Include="media\Alarm1.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -299,6 +300,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="ReadME.txt" />
+    <None Include="Resources\socialDistancing.jpg" />
     <Content Include="SpeechLibrary.xml" />
     <None Include="Resources\robot_face.gif" />
     <None Include="Resources\socialDistancing1.jpg" />

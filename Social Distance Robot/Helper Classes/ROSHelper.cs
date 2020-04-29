@@ -355,6 +355,10 @@ namespace robot_head
             }
         }
 
+        public static void StopCheckingTeleOP()
+        {
+            MoveOne(-100, 0);
+        }
 
         static public void Disconnect()
         {
@@ -427,12 +431,12 @@ namespace robot_head
             }
             else if (e.Status.Length == 0)
             {
-                Roving.NavigationIncompleted = false;
+                Roving.NavigationIncompleted = true;
                 GlobalFlowControl.Navigation.Canceled = true;
             }
             else
             {
-                Roving.NavigationIncompleted = false;
+                Roving.NavigationIncompleted = true;
                 GlobalFlowControl.Navigation.Stucked = true;
             }
 

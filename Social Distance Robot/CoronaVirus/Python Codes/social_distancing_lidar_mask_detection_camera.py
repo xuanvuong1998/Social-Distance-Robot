@@ -6,10 +6,7 @@ import math
 import datetime
 import time
 from run import Reid
-import argparse
 
-import numpy as np
-from PIL import Image
 #from keras.models import model_from_json
 from utils.anchor_generator import generate_anchors
 from utils.anchor_decode import decode_bbox
@@ -18,7 +15,6 @@ from load_model.tensorflow_loader import load_tf_model, tf_inference
 
 #for Orbbec depth value
 from primesense import openni2
-from primesense import _openni2 as c_api
 
 #############CONSTANTS################
 
@@ -31,10 +27,10 @@ DEPTH_OUTPUT_FOLDER = "C:/RobotReID/Depth_Output/depth_value.txt"
 
 #############CAMERA SETTINGS###############
 
-START_CAMERA_ID = 2 # 0, 1 are built-in windows cameras
-END_CAMERA_ID = 3
-FRONT_CAMERA_ID = 3
-BACK_CAMERA_ID = 2
+START_CAMERA_ID = 2 # 2 ( 0, 1 are built-in windows cameras)
+END_CAMERA_ID = 2 # 3
+FRONT_CAMERA_ID = 2
+BACK_CAMERA_ID = 3 
 
 IMAGE_RESIZE_WIDTH = 640
 IMAGE_RESIZE_HEIGHT = 480
@@ -42,7 +38,6 @@ IS_VIDEO_STREAMED_ENABLED = True
 CAMERA_DEGREE_RANGE = 60 #degreee
 LEFT_MOST_PIXEL = 65 #pixel
 RIGHT_MOST_PIXEL = 578 #pixel
-X_ERROR = 10 #cm
 
 ZERO_DEGREE_PIXEL = LEFT_MOST_PIXEL
 DEGREE_TO_PIXEL = (RIGHT_MOST_PIXEL - LEFT_MOST_PIXEL) / CAMERA_DEGREE_RANGE 
@@ -50,27 +45,32 @@ DEGREE_TO_PIXEL = (RIGHT_MOST_PIXEL - LEFT_MOST_PIXEL) / CAMERA_DEGREE_RANGE
 CAMERA_PIXEL_RANGE = RIGHT_MOST_PIXEL - LEFT_MOST_PIXEL #pixel
 
 
-###########PEOPLE DECTION SETTINGS############
+###########PEOPLE DETECTION SETTINGS############
 
 MIN_CONFIDENCE_SCORE_REQUIRED = 0.5 #percent
-DELAY_PER_FRAME = 0.01 #seconds
-MIN_SOCIAL_DIS_DETECTED_CNT_REQUIRED = 1 #min times detected required per interval  (FRAME_CHECKING_INTERVAL)
-FRAME_CHECKING_INTERVAL = 4 #seconds 
+DELAY_PER_FRAME = 0.05 #seconds 
+MIN_SOCIAL_DIS_DETECTED_PER_INTERVAL = 1 #min times detected required per interval  (SOCIAL_DISTANCE_CHECKING_INTERVAL)
+SOCIAL_DISTANCE_CHECKING_INTERVAL = 5 #seconds 
 
-MAX_SOCIAL_DISTANCE_ALLOWED = 100 #cm
-MIN_DEPTH_DIS_REQUIRED = 40 #cm
-MAX_DEPTH_DIS_ACCEPTED = 1000 #cm 
+MAX_SOCIAL_DISTANCE_ALLOWED = 90 #cm
+MIN_DEPTH_DIS_REQUIRED = 150 #cm
+MAX_DEPTH_DIS_ACCEPTED = 800 #cm 
+MIN_DIS_FROM_CAM_TO_PERSON = 160 #cm
+PERSON_GO_AWAY_TIME = 4 #seconds
 
 SOCIAL_DIS_WARNING_TIME = 15 #seconds
-MASK_VIOLATION_WARNING_TIME = 0.01
+MASK_VIOLATION_WARNING_TIME = 8
 
-MAX_AREA_SCALE_BOUNDING_BOX = 2 #2times
+#2 people close each other should have maximum a specific times scale bounding boxes  
+MAX_AREA_SCALE_BOUNDING_BOX = 1.7 #times
 
-READ_DEPTH_DATA_INTERVAL = 0.05 #seconds (read depth from file per interval)
-READ_DEPTH_MAX_TRIES = 1 #times ->> Total time: READ_DEPTH_MAX_TRIES * READ_DEPTH_DATA_INTERVAL
+X_DELTA_MIN_ACCEPTED = 40 #pixel xdelta bounding_box
+Y_DELTA_MIN_ACCEPTED = 110 #pixel ydelta bounding_box
+
+READ_DEPTH_FREQUENCY = 0.4 #seconds (read depth from file per interval)
+READ_DEPTH_MAX_TRIES = 4 #times ->> Total time: READ_DEPTH_MAX_TRIES * READ_DEPTH_FREQUENCY
 
 ##############################################
-
 
 ######################################
 
@@ -82,6 +82,7 @@ violation_detected = False
 
 first_mask_detected_time = 0
 mask_detected_count = 0
+MASK_CHECKING_INTERVAL = 3 #seconds
 
 
 ################################################
@@ -104,28 +105,29 @@ anchors_exp = np.expand_dims(anchors, axis=0)
 id2class = {0: 'Mask', 1: 'NoMask'}
 
 MASK_DETECT_CAMERA_ID = FRONT_CAMERA_ID
-MASK_DETECTION_MIN_CONFIDENCE_SCORE = 0.5
-MIN_BOX_SIZE_REQUIRED = 55 #pixel
-
+MASK_DETECTION_MIN_CONFIDENCE_SCORE = 0.7
+MIN_BOX_WIDTH_FOR_MASK_DECTECT = 40 #pixel
+MIN_MASK_VIOLATION_CHECKING_INTERVAL = 3 #seconds
 
 #################################################
 
 
 def printMessage(mess):
+    
     print(mess, flush =True)
 
 def openDepthCamera():
     
-    print("opening depth camera", flush=True)
+    printMessage("opening depth camera")
     global dev
     try:
         openni2.initialize(REDIST_FOLDER_PATH)
     except:
-        print("***Device not initialized***")
+        printMessage("***Device not initialized***")
     try:
         dev = openni2.Device.open_all()
     except:
-        print("***Unable to open the device***")
+        printMessage("***Unable to open the device***")
             
 def wait(delayTime):
     if (IS_VIDEO_STREAMED_ENABLED):       
@@ -183,14 +185,14 @@ class cameraThread(threading.Thread):
         threading.Thread.__init__(self)
         self.camID = camID
     def run(self):
-        print ("Starting thread ")
+        printMessage("Starting thread ")
         loopDetecting(self.camID)       
 
 def loopDetecting(camID):
     cap = cv2.VideoCapture(camID)
     
     truncateDepthOutputFile()
-    print("looping ")
+    printMessage("looping ")
     while True:    
         if (violation_detected == False): 
             detectImage(cap, camID)
@@ -205,16 +207,25 @@ def loopDetecting(camID):
     cv2.destroyAllWindows()
 
 
-
 def isCloseEachOther(left, right):
     
     leftX1 = left[0]
     rightX1 = left[1]
     d1 = left[2]
+    box_area1 = left[3]
     
     leftX2 = right[0]
     rightX2 = right[1]
     d2 = right[2]
+    box_area2 = right[3]
+    
+    area_rate = box_area1 / box_area2
+    
+    if (area_rate < 1): 
+        area_rate = 1 / area_rate
+    
+    if (area_rate >= MAX_AREA_SCALE_BOUNDING_BOX):
+        return False
     
     #swap if frame1 X > frame2 X 
     if (leftX1 > leftX2):
@@ -225,17 +236,9 @@ def isCloseEachOther(left, right):
         rightX1 = rightX2
         rightX2 = tmp
     
-    '''
-    averageCmPerPixel = ((d1 + d2) / 2) / CAMERA_PIXEL_RANGE
-        
-    xDelta = max(0, leftX2 - rightX1) * averageCmPerPixel
-    xDelta += X_ERROR
-    dDelta = abs(d1 - d2)
-     
-    finalDis = round(math.sqrt(xDelta * xDelta + dDelta * dDelta))
-    '''
+    xDelta = max(0, leftX2 - rightX1)
     
-    angleInDegree = CAMERA_DEGREE_RANGE - ((leftX2 - rightX1) + CAMERA_PIXEL_RANGE) / DEGREE_TO_PIXEL
+    angleInDegree = CAMERA_DEGREE_RANGE - (xDelta + CAMERA_PIXEL_RANGE) / DEGREE_TO_PIXEL
     
     angleInRad = angleInDegree * math.pi / 180 
     
@@ -243,7 +246,8 @@ def isCloseEachOther(left, right):
     
     exactFinalDis = round(exactFinalDis)
     
-    print('-------FINAL DISTANCE = ' + str(exactFinalDis) , end = " ** ")
+    if (exactFinalDis < MAX_SOCIAL_DISTANCE_ALLOWED):
+        printMessage('-------FINAL DISTANCE = ' + str(exactFinalDis))
     
     return exactFinalDis < MAX_SOCIAL_DISTANCE_ALLOWED
     
@@ -258,17 +262,45 @@ def findAnyPair(allDetectedPeople):
 def truncateDepthOutputFile():
     clearContentDone = False
         
-    while(clearContentDone == False):           
+    while(clearContentDone == False):            
         try:
-            f = open(DEPTH_OUTPUT_FOLDER, "r+")
-            
-            f.truncate(0)
-            
-            f.close()
-            
+            with open(DEPTH_OUTPUT_FOLDER, "r+") as f:           
+                f.truncate(0)           
             clearContentDone = True
-        except:               
-            print('truncate not successfully!')
+        except:        
+            printMessage('truncate not successfully!')
+            time.sleep(0.2)
+            
+def getDepthsFromAngles(angles):
+    
+    #ros_helper.getDepth(angles)
+    
+    sendMessToWinform("x_angle," + angles)
+    wait_for_depth_vl_cnt = 0
+    
+    d = ""
+        
+    while len(d) == 0:    
+        time.sleep(READ_DEPTH_FREQUENCY)
+        
+        try:           
+            with open(DEPTH_OUTPUT_FOLDER, "r") as f:    
+                d = f.readline()          
+        except:
+            printMessage('read file err')
+                       
+        wait_for_depth_vl_cnt = wait_for_depth_vl_cnt + 1
+        
+        if (len(d) == 0 and wait_for_depth_vl_cnt >= READ_DEPTH_MAX_TRIES):
+            printMessage('give up get depth val')
+            break
+    
+    truncateDepthOutputFile()
+    
+    return d
+
+def isFrontCAM(camID):
+    return camID == FRONT_CAMERA_ID
 
 def detectImage(cap, camID):
     
@@ -278,7 +310,7 @@ def detectImage(cap, camID):
         
     img_raw = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     if (status):
-        inference(img_raw, img,
+        inference(img_raw,
                   MASK_DETECTION_MIN_CONFIDENCE_SCORE,
                   iou_thresh=MASK_DETECTION_MIN_CONFIDENCE_SCORE,
                   target_shape=(260, 260),
@@ -315,70 +347,69 @@ def detectImage(cap, camID):
     
     if len(boxes_cur) > 0:    
         x_angles = ""
+        
+        valid_boxes_cnt = 0
         for i in range(len(boxes_cur)):
 
-            x_output = int(boxes_cur[i][1] + (boxes_cur[i][3] - boxes_cur[i][1])/2)
-            y_cen = int(boxes_cur[i][0] + (boxes_cur[i][2] - boxes_cur[i][0])/2)
+            x_delta = boxes_cur[i][3] - boxes_cur[i][1]
+            y_delta = boxes_cur[i][2] - boxes_cur[i][0]
             
-            x_angle = round((x_output - ZERO_DEGREE_PIXEL) / (DEGREE_TO_PIXEL))
+            box_area = x_delta * y_delta
+              
+            x_center = int(boxes_cur[i][1] + (x_delta)/2)
+            
+            y_center = int(boxes_cur[i][0] + (y_delta)/2)
+            x_delta_to_left_most = max(0, x_center - ZERO_DEGREE_PIXEL)
+            x_angle = (x_delta_to_left_most / (DEGREE_TO_PIXEL))
+            
+            if (isFrontCAM(camID) == False): 
+                x_angle += 170 #offset 10 degreee between back camera and LIDAR
                     
-            x_angles = x_angles +str( x_angle)
-            
-            if (i < len(boxes_cur) - 1):
-                x_angles = x_angles + ","
-            
-        print("x_angle," + x_angles, flush = True)
-          
-        d = "" 
+            if (x_delta >= X_DELTA_MIN_ACCEPTED and y_delta >= Y_DELTA_MIN_ACCEPTED):
+                valid_boxes_cnt += 1
+                x_angles = x_angles + str(x_angle)
                 
-        wait_for_depth_vl_cnt = 0
-        
-        while len(d) == 0:     
-            wait_for_depth_vl_cnt = wait_for_depth_vl_cnt + 1
-            
-            if (wait_for_depth_vl_cnt >= READ_DEPTH_MAX_TRIES):
-                print('give up get depth val', flush = True)
-                break
-            try:
-                
-                f = open(DEPTH_OUTPUT_FOLDER, "r+")
-                d = f.readline()
-                
-                f.close()
-                time.sleep(READ_DEPTH_DATA_INTERVAL)
-            except:
-                print('read file err')
-        
-        
-        truncateDepthOutputFile()
-        
-                                
-        #clear content inside
+                if (i < len(boxes_cur) - 1):
+                    x_angles = x_angles + "," 
+                             
+        d = getDepthsFromAngles(x_angles)
         
         if (len(d) == 0):
             return
         
-        print('dis received from c# ' + d)
+        printMessage('dis received from c# ' + d)
                          
         dis = d.split(',')
         
-        for i in range(len(boxes_cur)):
-          
+        if (len(dis) != valid_boxes_cnt):
+            print('jeremy stupid!!!!')
+            return
+        
+        for i in range(valid_boxes_cnt):
+              
             distance = float(dis[i])
                               
+            if (distance <= MIN_DIS_FROM_CAM_TO_PERSON):
+                sendMessToWinform("person_too_close_to_robot")
+                time.sleep(PERSON_GO_AWAY_TIME)
+                return
+                
             if (distance > MIN_DEPTH_DIS_REQUIRED and distance < MAX_DEPTH_DIS_ACCEPTED): 
-                detectedInfo.append((boxes_cur[i][1], boxes_cur[i][3], distance))
+                x_delta = boxes_cur[i][3] - boxes_cur[i][1]
+                y_delta = boxes_cur[i][2] - boxes_cur[i][0]
+            
+                box_area = x_delta * y_delta
+                detectedInfo.append((boxes_cur[i][1], boxes_cur[i][3], distance, box_area))
                 my_string += "(" + str(boxes_cur[i][1]) + ", " + str(boxes_cur[i][3]) + ", " + str(distance)+ ") , "
 
-                cv2.putText(img,str(x_output) + " , " + str(x_angle) + " , " +  str(distance) + "m",(30,50),cv2.FONT_HERSHEY_SIMPLEX,1,(0,0,255),2,cv2.LINE_AA)
-                   
-        
+                #cv2.putText(img,str(x_center) + " , " + str(x_angle) + " , " +  str(distance) + "m",(30,50),cv2.FONT_HERSHEY_SIMPLEX,1,(0,0,255),2,cv2.LINE_AA)
+                           
         print(my_string, end = "=>>>> ", flush = True)
         
         warning = findAnyPair(detectedInfo)
         
         if (warning == True):
-            print("CLOSED!!!", flush = True)
+            printMessage("CLOSED!!!")
             global detected_count, first_detected_time
             
             if (detected_count >= 1):
@@ -387,7 +418,7 @@ def detectImage(cap, camID):
                 
                 timeDelta = (current_dectected_time - first_detected_time).total_seconds()
                               
-                if (timeDelta > FRAME_CHECKING_INTERVAL):
+                if (timeDelta > SOCIAL_DISTANCE_CHECKING_INTERVAL):
                     printMessage("Time out! Reset from 1")
                     detected_count = 0
                             
@@ -397,7 +428,7 @@ def detectImage(cap, camID):
                 printMessage("---------FIRST DETECTED--------")
                 first_detected_time = datetime.datetime.now()    
                 
-            if (detected_count == MIN_SOCIAL_DIS_DETECTED_CNT_REQUIRED):                                      
+            if (detected_count == MIN_SOCIAL_DIS_DETECTED_PER_INTERVAL):                                      
                 printMessage('----------DANGEROUS!!!!!!!!!!---------------')
                 saveEvidence(img, SOCIAL_DIS_VIOLATION_FOLDER)
                 sendWarningToWinForm()                
@@ -411,7 +442,10 @@ def detectImage(cap, camID):
         
     else:        
         pass
-                             
+     
+def sendMessToWinform(mess):
+    print(mess, flush = True)
+                        
 def showStreamingVideo(windowsName, img):
     
     
@@ -427,7 +461,7 @@ def saveEvidence(image, folder):
     
     
 def sendWarningToWinForm():
-    print('social_distancing_warning', flush=True)
+    sendMessToWinform('social_distancing_warning')
 
 def detectAllViolation():
     
@@ -436,7 +470,7 @@ def detectAllViolation():
    
     threads = []    
     
-    print("depth stream started", flush=True)
+    printMessage("depth stream started")
     for i in range(START_CAMERA_ID, END_CAMERA_ID + 1):    
         thread = cameraThread(i)
         thread.start()
@@ -449,7 +483,7 @@ def detectAllViolation():
 ######################FACE MASK DETECTION#########################
        
 
-def inference(image, image_color,
+def inference(image, 
               conf_thresh=MASK_DETECTION_MIN_CONFIDENCE_SCORE,
               iou_thresh=0.4,
               target_shape=(160, 160),
@@ -466,8 +500,6 @@ def inference(image, image_color,
     :param show_result: whether to display the image.
     :return:
     '''
-    # image = np.copy(image)
-    output_info = []
     height, width, _ = image.shape
     
     image_resized = cv2.resize(image, target_shape)
@@ -509,8 +541,8 @@ def inference(image, image_color,
             
             box_size = (xmax - xmin)
             
-            if (box_size < MIN_BOX_SIZE_REQUIRED):
-                print ('box size too small! ignore!', flush =True)
+            if (box_size < MIN_BOX_WIDTH_FOR_MASK_DECTECT):
+                printMessage('<<<<<< box size too small! ignore!')
                 return
             
             cv2.putText(image, "%s: %.2f" % (id2class[class_id], conf), (xmin + 2, ymin - 2),
@@ -524,16 +556,16 @@ def inference(image, image_color,
                 global first_mask_detected_time
                 current_dectected_time = datetime.datetime.now()
                 if (mask_detected_count == 1):
-                    print("first time detected, wait for 5 seconds", flush = True)
+                    printMessage("first time detected, confirming in few more seconds")
                     first_mask_detected_time = current_dectected_time
                     return
                                       
                 timeDelta = (current_dectected_time - first_mask_detected_time).total_seconds()
                                  
-                if (timeDelta >= FRAME_CHECKING_INTERVAL):
+                if (timeDelta >= MASK_CHECKING_INTERVAL):
                     
-                    saveEvidence(image_color, MASK_VIOLATION_EVIDENCE_PATH)
-                    print("-----!!!!!!facial_mask_violation", flush = True)
+                    saveEvidence(image, MASK_VIOLATION_EVIDENCE_PATH)
+                    sendMessToWinform("facial_mask_violation")
                 
                     global violation_detected 
                     violation_detected = True
@@ -544,13 +576,7 @@ def inference(image, image_color,
                 mask_detected_count = 0 
                 
                 
-        #output_info.append([class_id, conf, xmin, ymin, xmax, ymax])
-
-    '''
-    if show_result:
-        Image.fromarray(image).show()
-    return output_info
-    '''
+        
 
  
 
@@ -560,6 +586,7 @@ if __name__ == "__main__":
      
     global odapi
     
+    #ros_helper.connect()
     printMessage('before odapi')
     odapi = DetectorAPI(path_to_ckpt=MODEL_PATH)
     

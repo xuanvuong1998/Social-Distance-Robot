@@ -21,6 +21,10 @@ namespace robot_head
             "distancing for your own safety! At least 1 meter apart. Again, at least 1 " +
             "meter apart";
 
+        private const string ASK_PESON_GIVE_WAY_MES = "Hi, I am a Park Patrol robot. I'm " +
+            "on duty now, could you please give way to me? Sorry for the inconvenience caused. " +
+            "thank you.";
+
         public const string SOCIAL_DISTANCING_VIOLATION = "SOCIAL_DISTANCING";
 
         private const int DELAY_AFTER_WARNING = 1000 * 2; // miliseconds
@@ -69,8 +73,7 @@ namespace robot_head
         public static void AskPersonGiveWay()
         {
             Roving.Pause();
-            Synthesizer.Speak(". Please give way for me, thank you for " +
-                "your understanding");
+            Synthesizer.Speak(ASK_PESON_GIVE_WAY_MES);
             Roving.Resume();
         }
 

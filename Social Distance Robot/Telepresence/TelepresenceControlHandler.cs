@@ -45,6 +45,7 @@ namespace robot_head
                 case "EndCall":
                     GlobalFlowControl.TelepresenceMode = false;
                     ROSHelper.Stop();
+                    ROSHelper.StopCheckingTeleOP();
                     Roving.Resume();
                     break;
             }

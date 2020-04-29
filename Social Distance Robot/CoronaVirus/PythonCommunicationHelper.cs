@@ -24,13 +24,16 @@ namespace robot_head
 
         private const string DETECT_SOCIAL_DIS_AND_MASK_BY_CAMERA_LIDAR =
                 PYTHON_WORKING_DIR + @"social_distancing_lidar_mask_detection_camera.py";
+
+        private const string TEST_FILE = PYTHON_WORKING_DIR + "vuong_test.py";
         #endregion
+
 
         #region Properties
         private const string PYTHON_EXE_PATH = @"C:\ProgramData\Anaconda3\python.exe";
 
-        //private const string ACTIVE_PYTHON_FILE = DETECT_SOCIAL_DIS_AND_MASK_BY_CAMERA_LIDAR;
         private const string ACTIVE_PYTHON_FILE = DETECT_SOCIAL_DIS_AND_MASK_BY_CAMERA_LIDAR;
+        //private const string ACTIVE_PYTHON_FILE = DETECT_SOCIAL_DIS_AND_MASK_BY_CAMERA_LIDAR;
 
         private static Process pythonProcess;
 
@@ -91,7 +94,8 @@ namespace robot_head
 
         private static void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
-            if (ViolationDetectionHelper.IsDetected) return;
+            if (ViolationDetectionHelper.IsDetected
+                || GlobalFlowControl.TelepresenceMode) return;
 
             if (e.Data != null)
             {
