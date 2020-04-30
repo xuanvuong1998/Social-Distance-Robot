@@ -15,6 +15,8 @@ namespace robot_head
     {
         #region Constants
 
+        public static string CameraDetectionReady { get; set; } = "";
+
         private const string PYTHON_WORKING_DIR = @"C:\RobotReID\person_re_id-master\";
 
         private const string DETECT_SOCIAL_DIS_BY_CAMERA =
@@ -33,7 +35,6 @@ namespace robot_head
         private const string PYTHON_EXE_PATH = @"C:\ProgramData\Anaconda3\python.exe";
 
         private const string ACTIVE_PYTHON_FILE = DETECT_SOCIAL_DIS_AND_MASK_BY_CAMERA_LIDAR;
-        //private const string ACTIVE_PYTHON_FILE = DETECT_SOCIAL_DIS_AND_MASK_BY_CAMERA_LIDAR;
 
         private static Process pythonProcess;
 
@@ -81,7 +82,7 @@ namespace robot_head
         #region Flow
         public static void StartChecking()
         {            
-            if (GlobalData.SocialDistanceDetectionEnabled)
+            if (GlobalData.Covid19ViolationDetectEnabled)
             {
                 ThreadHelper.StartNewThread(new Action(() => KeepReadingData()));
             }
@@ -106,7 +107,24 @@ namespace robot_head
                 return;
             }
             
-            if (e.Data.Contains("x_angle"))
+            if (e.Data == "camera_ready")
+            {
+                CameraDetectionReady = "ready"; 
+            }
+            else if (e.Data == "no_camera_detected")
+            {
+                Synthesizer.Speak("NO CAMERA was detected. Check again please.");
+                CameraDetectionReady = "not_ready";
+            }
+            else if (e.Data == "ros_ready")
+            {
+                ROSHelper.ROS_STATUS = "online";
+            }
+            else if (e.Data == "ros_not_ready")
+            {
+                ROSHelper.ROS_STATUS = "offline";
+            }
+            else if (e.Data.Contains("x_angle"))
             {
                 int firstComasIndex = e.Data.IndexOf(',');
                     

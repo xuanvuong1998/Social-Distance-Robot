@@ -5,7 +5,7 @@ namespace robot_head
 {
     class Roving
     {
-        private const int NEXT_GOAL_DELAY = 1000 * 3;
+        private static int NEXT_GOAL_DELAY = GlobalData.RovingLocationDelay;
         public static bool NavigationIncompleted { get; set; } = false;
         private static bool _isPausing { get; set; } = false;
 

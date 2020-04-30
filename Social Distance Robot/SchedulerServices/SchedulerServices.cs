@@ -40,14 +40,15 @@ namespace robot_head.scheduler
 
         public static SchedulerService Instance => new SchedulerService();
 
-        public void ScheduleTask(bool SchedulerType, int hour, int min, int sec, int intervalInMiliSeconds, int loops, Action taskDemanded)
+        public void ScheduleTask(bool SchedulerType, int hour, int min,
+            int sec, int intervalInMiliSeconds, int loops, Action taskDemanded)
         {
             DateTime now = DateTime.Now;
 
             DateTime firstRun = new DateTime(now.Year, now.Month, now.Day, hour, min, sec);
 
             TimeSpan timeToGo = firstRun - now;
-          
+
             if (timeToGo <= TimeSpan.Zero)
             {
                 if (-timeToGo.TotalMinutes > 10)
@@ -57,7 +58,7 @@ namespace robot_head.scheduler
                 else
                 {
                     timeToGo = TimeSpan.FromSeconds(2);
-                }               
+                }
             }
 
             task = taskDemanded;
@@ -67,7 +68,9 @@ namespace robot_head.scheduler
             taskTimer.Elapsed += MainTimer_Elapsed;
             ticks = 0;
             this.loops = loops;
-            var timer = new Timer { Interval = timeToGo.TotalMilliseconds, AutoReset = false };
+            var timer = new Timer
+            { Interval = timeToGo.TotalMilliseconds,
+                AutoReset = false };
 
             if (!SchedulerType)
             {
@@ -77,7 +80,8 @@ namespace robot_head.scheduler
             {
                 dailyTimers.Add(taskTimer);
             }
-            timer.Elapsed += (sender, e) => {
+            timer.Elapsed += (sender, e) =>
+            {
 
                 taskTimer.Start();
                 Debug.WriteLine("Timer start");
@@ -91,7 +95,7 @@ namespace robot_head.scheduler
             task.Invoke();
             ticks++;
             Debug.WriteLine("Tick: " + ticks);
-            if (ticks == loops)
+            if (ticks >= loops)
             {
                 taskTimer.Stop();
                 taskTimer.Dispose();

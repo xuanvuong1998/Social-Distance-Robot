@@ -21,6 +21,7 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <TargetFrameworkProfile />
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -33,7 +34,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -195,7 +195,6 @@
     <Compile Include="Commons\ConversationGlobalFlow.cs" />
     <Compile Include="Commons\GlobalData.cs" />
     <Compile Include="Commons\GlobalFlowControl.cs" />
-    <Compile Include="Commons\SpeechGeneration.cs" />
     <Compile Include="CoronaVirus\ViolationDetectionHelper.cs" />
     <Compile Include="CoronaVirus\Warning Forms\FrmMaskWarning.cs">
       <SubType>Form</SubType>
@@ -270,6 +269,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="CoronaVirus\Python Codes\ros_helper.py" />
     <Content Include="CoronaVirus\Python Codes\social_distance_lidar.py" />
     <Content Include="CoronaVirus\Python Codes\social_distancing_camera.py" />
     <Content Include="CoronaVirus\Python Codes\social_distancing_lidar_mask_detection_camera.py" />

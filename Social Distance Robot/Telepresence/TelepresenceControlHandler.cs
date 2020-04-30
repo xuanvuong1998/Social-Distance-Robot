@@ -76,7 +76,7 @@ namespace robot_head
                 int m = int.Parse(ConfManager.AppSettings["AnnTime"].Split('|')[i].Split(':')[1]);
                 Action action = new Action(() =>
                 {                    
-                    SpeechGeneration.SpeakAsync(command);
+                    Synthesizer.SpeakAsync(command);
                 });
 
                 TelepresenceScheduler.DailyIntervalInSeconds(h, m, 0, interval, loops, action);
@@ -108,8 +108,7 @@ namespace robot_head
             //LoadDailyAnnouncement();
             Action action = new Action(() =>
             {
-                
-                SpeechGeneration.SpeakAsync(command);
+                Synthesizer.SpeakAsync(command);
             });
 
             TelepresenceScheduler.DailyIntervalInSeconds(h, m, s, interval, loops, action);
@@ -137,12 +136,14 @@ namespace robot_head
             int loopsCount = int.Parse(msg.Split('/')[3]);
             int interval = int.Parse(msg.Split('/')[4]);
 
+            interval += Math.Max(0, command.Length / 6 - 8);
+
             int hour, min, sec;
 
             if (startTimeType == "Immediate")
             {
                 
-                SpeechGeneration.SpeakAsync(command);
+                Synthesizer.SpeakAsync(command);
                 DateTime now = DateTime.Now;
                 hour = now.Hour;
                 min = now.Minute;
@@ -159,7 +160,7 @@ namespace robot_head
             Action action = new Action(() =>
             {
                 
-                SpeechGeneration.SpeakAsync(command);
+                Synthesizer.SpeakAsync(command);
             });
 
             if (startTimeType == "Daily")
@@ -174,12 +175,9 @@ namespace robot_head
 
         private void InterpretText(string text)
         {
-            text = ". ." + text;
- 
+            text = ". " + text;
             Synthesizer.Speak(text);     
         }
-
-        
 
     }
 }

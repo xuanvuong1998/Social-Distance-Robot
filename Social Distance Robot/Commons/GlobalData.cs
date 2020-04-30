@@ -11,8 +11,15 @@ namespace robot_head
     public class GlobalData
     {
         public static bool TelepresenceEnabled { get; set; } = true;
-        public static bool SocialDistanceDetectionEnabled { get; set; } = true;
-        public static bool RovingEnable { get; set; } = false; 
+        public static bool Covid19ViolationDetectEnabled { get; set; } = false;
+        public static bool RovingEnable { get; set; } = false;
+        public static bool WindowMaximizedNoneBorder { get; set; } = false;
+
+        public static bool StopMovingDuringWarning { get; set; } = false;
+
+        // Delay after robot reach a goal and move to next location
+        public static int RovingLocationDelay { get; set; } = 1000 * 2; 
+
         public static readonly string Voice1 = ConfigurationManager.AppSettings["Voice 1"];
         public static readonly string Voice2 = ConfigurationManager.AppSettings["Voice 2"];
         public static readonly string Voice3 = ConfigurationManager.AppSettings["Voice 3"];

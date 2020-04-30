@@ -1,6 +1,7 @@
 ﻿using SpeechLibrary;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -22,8 +23,8 @@ namespace robot_head
             "meter apart";
 
         private const string ASK_PESON_GIVE_WAY_MES = "Hi, I am a Park Patrol robot. I'm " +
-            "on duty now, could you please give way to me? Sorry for the inconvenience caused. " +
-            "thank you.";
+            "on duty now, could you please give way to me?";
+           
 
         public const string SOCIAL_DISTANCING_VIOLATION = "SOCIAL_DISTANCING";
 
@@ -72,8 +73,10 @@ namespace robot_head
 
         public static void AskPersonGiveWay()
         {
+            IsDetected = true;
             Roving.Pause();
             Synthesizer.Speak(ASK_PESON_GIVE_WAY_MES);
+            IsDetected = false;
             Roving.Resume();
         }
 
@@ -81,30 +84,40 @@ namespace robot_head
         {
             if (IsDetected == true) return;
             IsDetected = true;
-            //BaseHelper.CancelNavigation();
 
-            if (violationType == MASK_VIOLATION)
+            if (GlobalData.StopMovingDuringWarning)
             {
-                Thread thread = new Thread(new ThreadStart(() =>
-                {
-                    frmMaskWarning.ShowDialog();
-                }));
-
-                thread.Start();
-            }
-            else
-            {
-                Thread thread = new Thread(new ThreadStart(() =>
-                {
-                    frmWarning.ShowDialog();
-                }));
-
-                thread.Start();
+                ROSHelper.CancelNavigation();
             }
 
+            try
+            {
+                if (violationType == MASK_VIOLATION)
+                {
+                    Thread thread = new Thread(new ThreadStart(() =>
+                    {
+                        frmMaskWarning.ShowDialog();
+                    }));
 
+                    thread.Start();
+                }
+                else
+                {
+                    Thread thread = new Thread(new ThreadStart(() =>
+                    {
+                        frmWarning.ShowDialog();
+                    }));
+
+                    thread.Start();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+            
             Task.Factory.StartNew(new Action(() => WarningTarget(violationType)));
-
+            
         }
 
         private static void Remind(string violationType)

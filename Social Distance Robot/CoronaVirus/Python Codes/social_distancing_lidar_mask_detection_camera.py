@@ -5,7 +5,7 @@ import threading
 import math
 import datetime
 import time
-from run import Reid
+import ros_helper
 
 #from keras.models import model_from_json
 from utils.anchor_generator import generate_anchors
@@ -18,12 +18,17 @@ from primesense import openni2
 
 #############CONSTANTS################
 
+MASK_DETECTION_ENABLED = True
+SOCIAL_DISTANCE_DETECTION_ENABLED = True
+
+
 MODEL_PATH = './ssd_inception_v2/frozen_inference_graph.pb'
 SOCIAL_DIS_VIOLATION_FOLDER = 'C:/RobotReID/SocialDistancingEvidences/'
 MASK_VIOLATION_EVIDENCE_PATH = 'C:/RobotReID/MaskViolationEvidences/'
 REDIST_FOLDER_PATH = 'C:/RobotReID/OpenNI2/OpenNI-Windows-x64-2.3.0.63/Redist'
 DEPTH_OUTPUT_FOLDER = "C:/RobotReID/Depth_Output/depth_value.txt"
 
+LOGGING_ENABLED = True
 
 #############CAMERA SETTINGS###############
 
@@ -34,7 +39,7 @@ BACK_CAMERA_ID = 3
 
 IMAGE_RESIZE_WIDTH = 640
 IMAGE_RESIZE_HEIGHT = 480
-IS_VIDEO_STREAMED_ENABLED = True
+IS_VIDEO_STREAMED_ENABLED = False
 CAMERA_DEGREE_RANGE = 60 #degreee
 LEFT_MOST_PIXEL = 65 #pixel
 RIGHT_MOST_PIXEL = 578 #pixel
@@ -44,7 +49,6 @@ DEGREE_TO_PIXEL = (RIGHT_MOST_PIXEL - LEFT_MOST_PIXEL) / CAMERA_DEGREE_RANGE
  
 CAMERA_PIXEL_RANGE = RIGHT_MOST_PIXEL - LEFT_MOST_PIXEL #pixel
 
-
 ###########PEOPLE DETECTION SETTINGS############
 
 MIN_CONFIDENCE_SCORE_REQUIRED = 0.5 #percent
@@ -52,11 +56,11 @@ DELAY_PER_FRAME = 0.05 #seconds
 MIN_SOCIAL_DIS_DETECTED_PER_INTERVAL = 1 #min times detected required per interval  (SOCIAL_DISTANCE_CHECKING_INTERVAL)
 SOCIAL_DISTANCE_CHECKING_INTERVAL = 5 #seconds 
 
-MAX_SOCIAL_DISTANCE_ALLOWED = 90 #cm
+MAX_SOCIAL_DISTANCE_ALLOWED = 85 #cm
 MIN_DEPTH_DIS_REQUIRED = 150 #cm
 MAX_DEPTH_DIS_ACCEPTED = 800 #cm 
 MIN_DIS_FROM_CAM_TO_PERSON = 160 #cm
-PERSON_GO_AWAY_TIME = 4 #seconds
+PERSON_GO_AWAY_TIME = 12 #seconds
 
 SOCIAL_DIS_WARNING_TIME = 15 #seconds
 MASK_VIOLATION_WARNING_TIME = 8
@@ -105,16 +109,15 @@ anchors_exp = np.expand_dims(anchors, axis=0)
 id2class = {0: 'Mask', 1: 'NoMask'}
 
 MASK_DETECT_CAMERA_ID = FRONT_CAMERA_ID
-MASK_DETECTION_MIN_CONFIDENCE_SCORE = 0.7
+MASK_DETECTION_MIN_CONFIDENCE_SCORE = 0.8
 MIN_BOX_WIDTH_FOR_MASK_DECTECT = 40 #pixel
 MIN_MASK_VIOLATION_CHECKING_INTERVAL = 3 #seconds
 
 #################################################
 
-
 def printMessage(mess):
-    
-    print(mess, flush =True)
+    if (LOGGING_ENABLED):    
+        print(mess, flush =True)
 
 def openDepthCamera():
     
@@ -139,7 +142,7 @@ def wait(delayTime):
 
 class DetectorAPI:
     def __init__(self, path_to_ckpt):
-        self.reid = Reid()
+        
         self.path_to_ckpt = path_to_ckpt
         # self.module = import_module('run')
         self.detection_graph = tf.Graph()
@@ -191,7 +194,6 @@ class cameraThread(threading.Thread):
 def loopDetecting(camID):
     cap = cv2.VideoCapture(camID)
     
-    truncateDepthOutputFile()
     printMessage("looping ")
     while True:    
         if (violation_detected == False): 
@@ -258,47 +260,17 @@ def findAnyPair(allDetectedPeople):
                 return True
     return False
 
-
-def truncateDepthOutputFile():
-    clearContentDone = False
         
-    while(clearContentDone == False):            
-        try:
-            with open(DEPTH_OUTPUT_FOLDER, "r+") as f:           
-                f.truncate(0)           
-            clearContentDone = True
-        except:        
-            printMessage('truncate not successfully!')
-            time.sleep(0.2)
-            
 def getDepthsFromAngles(angles):
     
-    #ros_helper.getDepth(angles)
+    ros_helper.pub_angles_to_ros(angles)
     
-    sendMessToWinform("x_angle," + angles)
-    wait_for_depth_vl_cnt = 0
+    d = ros_helper.getDepths()
     
-    d = ""
-        
-    while len(d) == 0:    
-        time.sleep(READ_DEPTH_FREQUENCY)
-        
-        try:           
-            with open(DEPTH_OUTPUT_FOLDER, "r") as f:    
-                d = f.readline()          
-        except:
-            printMessage('read file err')
-                       
-        wait_for_depth_vl_cnt = wait_for_depth_vl_cnt + 1
-        
-        if (len(d) == 0 and wait_for_depth_vl_cnt >= READ_DEPTH_MAX_TRIES):
-            printMessage('give up get depth val')
-            break
+    ros_helper.clearPreviousDepths()
     
-    truncateDepthOutputFile()
+    return d 
     
-    return d
-
 def isFrontCAM(camID):
     return camID == FRONT_CAMERA_ID
 
@@ -309,19 +281,22 @@ def detectImage(cap, camID):
     img = cv2.resize(img, (IMAGE_RESIZE_WIDTH, IMAGE_RESIZE_HEIGHT))
         
     img_raw = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    if (status):
+    if (status and MASK_DETECTION_ENABLED):
         inference(img_raw,
                   MASK_DETECTION_MIN_CONFIDENCE_SCORE,
                   iou_thresh=MASK_DETECTION_MIN_CONFIDENCE_SCORE,
                   target_shape=(260, 260),
                   draw_result=True,
-                  show_result=False)
-        cv2.imshow('image', img_raw[:, :, ::-1])
+                  show_result=False) 
         
+        showStreamingVideo("MASK DETECTION", img_raw)
+            
     global violation_detected
     if (violation_detected):
         return
         
+    if (SOCIAL_DISTANCE_DETECTION_ENABLED == False):
+        return
     im_h, im_w, _ = img.shape
    
     boxes, scores, classes, num = odapi.processFrame(img) 
@@ -342,7 +317,7 @@ def detectImage(cap, camID):
     
     detectedInfo = []
     
-    windowName = "Camera " + str(camID)
+    windowName = "SocialDistancing " + str(camID)
     showStreamingVideo(windowName, img)
     
     if len(boxes_cur) > 0:    
@@ -371,10 +346,12 @@ def detectImage(cap, camID):
                 
                 if (i < len(boxes_cur) - 1):
                     x_angles = x_angles + "," 
-                             
+                        
+            
         d = getDepthsFromAngles(x_angles)
         
         if (len(d) == 0):
+            printMessage('cannot get depths from lidar')
             return
         
         printMessage('dis received from c# ' + d)
@@ -448,7 +425,6 @@ def sendMessToWinform(mess):
                         
 def showStreamingVideo(windowsName, img):
     
-    
     if (IS_VIDEO_STREAMED_ENABLED):
         cv2.imshow(windowsName, img)
     
@@ -466,26 +442,46 @@ def sendWarningToWinForm():
 def detectAllViolation():
     
     printMessage("Start detecting")
-    global odapi
-   
-    threads = []    
     
-    printMessage("depth stream started")
-    for i in range(START_CAMERA_ID, END_CAMERA_ID + 1):    
-        thread = cameraThread(i)
-        thread.start()
-        threads.append(thread) 
+    caps = []
+    
+    for i in range(START_CAMERA_ID, END_CAMERA_ID + 1):
+        try:
+            cap = cv2.VideoCapture(i)
+            if (cap.isOpened()):
+                 caps.append((cap, i))           
+        except Exception as e:
+            print(e)
+            printMessage(str(i) + " is not a valid cam id")
+
+    printMessage(str(len(caps)) + " cameras are running!")
+    
+    if (len(caps) == 0):
+        sendMessToWinform("no_camera_detected")
+        return
+    
+    sendMessToWinform("camera_ready");
+    while True:
+        for i in range(len(caps)): 
+            if (violation_detected == False): 
+                detectImage(caps[i][0], caps[i][1])
+
+        cont = wait(DELAY_PER_FRAME)
         
-    for t in threads:
-        t.join()
-        
+        if (cont == False):
+            break
+            
+    cap.release()
+    openni2.unload()
+    cv2.destroyAllWindows()
+         
         
 ######################FACE MASK DETECTION#########################
        
 
 def inference(image, 
               conf_thresh=MASK_DETECTION_MIN_CONFIDENCE_SCORE,
-              iou_thresh=0.4,
+              iou_thresh=0.5,
               target_shape=(160, 160),
               draw_result=True,
               show_result=True
@@ -563,8 +559,7 @@ def inference(image,
                 timeDelta = (current_dectected_time - first_mask_detected_time).total_seconds()
                                  
                 if (timeDelta >= MASK_CHECKING_INTERVAL):
-                    
-                    saveEvidence(image, MASK_VIOLATION_EVIDENCE_PATH)
+                    saveEvidence(image[:, :, ::-1], MASK_VIOLATION_EVIDENCE_PATH)
                     sendMessToWinform("facial_mask_violation")
                 
                     global violation_detected 
@@ -574,24 +569,21 @@ def inference(image,
                     mask_detected_count = 0
             else:
                 mask_detected_count = 0 
-                
-                
-        
-
- 
-
+                                     
 #################################################################
 
 if __name__ == "__main__":
      
-    global odapi
+    ros_helper.connect()
     
-    #ros_helper.connect()
-    printMessage('before odapi')
+    global odapi
+      
+    printMessage('Initilizing detector api')
     odapi = DetectorAPI(path_to_ckpt=MODEL_PATH)
     
-    printMessage('after odapi')
-    #openDepthCamera()
+    printMessage('Init done!')
    
     detectAllViolation() 
+    
+    ros_helper.disconnect()
     

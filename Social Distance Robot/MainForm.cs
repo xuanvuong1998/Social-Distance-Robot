@@ -14,11 +14,14 @@ namespace robot_head
     {
         private static Timer savingTimer = new Timer();
         private const int ROS_CONNECT_DELAY = 1000 * 2; 
-
+        
         public void InitUI()
         {
             pictureBox1.Hide();
-            FormBorderStyle = FormBorderStyle.None;
+            if (GlobalData.WindowMaximizedNoneBorder)
+            {
+                FormBorderStyle = FormBorderStyle.None;
+            }
             WindowState = FormWindowState.Maximized;
             // Top Most : Don't use TopMost property. It will freeze your UI
         }
@@ -27,7 +30,7 @@ namespace robot_head
         {
             InitializeComponent();
 
-            //InitUI();
+            LoadAnnc();
             
         }
 
@@ -46,44 +49,91 @@ namespace robot_head
 
         private void MainForm_Shown(object sender, EventArgs e)
         {
-        }
+            InitSpeech();
 
-        private void MainForm_Load(object sender, EventArgs e)
-        {
+            Synthesizer.SpeakAsync("Please wait a few seconds to load the " +
+                "whole program");
 
             if (GlobalData.TelepresenceEnabled)
             {
                 DisplayWebFace();
+                Thread.Sleep(1000);
+                Synthesizer.SpeakAsync("telepresence is ready");
             }
-            
+
             InitUI();
 
             ViolationDetectionHelper.InitForms();
             PythonCommunicationHelper.StartChecking();
-                      
-             
+
             if (GlobalData.TelepresenceEnabled == false)
             {
                 DisplayRobotFace();
             }
-            
-            InitSpeech();
 
             ROSHelper.Connect();
 
-            Thread.Sleep(ROS_CONNECT_DELAY);
-            
+            if (GlobalData.Covid19ViolationDetectEnabled)
+            {
+                while (ROSHelper.ROS_STATUS == "") { }
+
+                if (ROSHelper.ROS_STATUS == "online")
+                {
+                    Synthesizer.SpeakAsync("ROS BRIDGE is ready");
+                }
+                else
+                {
+                    Synthesizer.Speak("ROS BRIDGE IS NOT READY! PLEASE CHECK AGAIN");
+
+                }
+
+                var timeFlag = DateTime.Now;
+                while (PythonCommunicationHelper.CameraDetectionReady == "")
+                {
+                    Thread.Sleep(1000);
+
+                    var elapsed = DateTime.Now - timeFlag;
+
+                    if (elapsed.TotalSeconds >= 25)
+                    {
+                        Synthesizer.Speak("Sorry, SOCIAL DISTANCING and face mask detection " +
+                            "is not ready yet. ");
+                        this.Close();
+                    }
+                }
+
+                if (PythonCommunicationHelper.CameraDetectionReady != "ready")
+                {
+                    this.Close();
+                }
+
+                Thread.Sleep(1000 * 10);
+                Synthesizer.SpeakAsync("Safe distancing and face mask " +
+                    "detection are ready");
+
+            }
+            else
+            {
+                Synthesizer.SpeakAsync("ROS BRIDGE IS READY");
+            }
+
+            Synthesizer.Speak("Everything is ready now!");
+
             if (GlobalData.RovingEnable)
             {
+
                 Roving.Start();
             }
-           
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+ 
         }
 
         private void InitSpeech()
         {
             Synthesizer.SelectVoiceByName(GlobalData.Voice2);
-
         }
 
         private void InitExcelHelper()
@@ -119,6 +169,7 @@ namespace robot_head
 
         private void MainForm_FormClosing_1(object sender, FormClosingEventArgs e)
         {
+            Synthesizer.Speak("The system is closing now");
             PythonCommunicationHelper.KillPython();
             ROSHelper.CancelNavigation();
             ROSHelper.Stop();
@@ -126,7 +177,7 @@ namespace robot_head
 
             Roving.Stop();
 
-            //Environment.Exit(0);
+            Environment.Exit(0);
             //Application.Exit();
         }
 
@@ -143,18 +194,6 @@ namespace robot_head
             //{
             //    ROSHelper.SendDetectedAngleToROS("20,30,40.5");
             //}
-            //if (e.KeyData == Keys.Enter)
-            //{
-            //    GlobalFlowControl.Robot.IsFollowing = false;
-            //    ROSHelper.Stop();
-            //}
-
-            //if (e.KeyData == Keys.R)
-            //{
-            //    RestartApplication();
-            //}
         }
-
-      
     }
 }

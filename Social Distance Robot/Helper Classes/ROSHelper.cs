@@ -16,6 +16,7 @@ namespace robot_head
 {
     public class ROSHelper
     {
+        public static string ROS_STATUS { get; set; } = "";
         public static readonly double DEFAULT_LINEAR_SPEED = 0.2;
         public static readonly double DEFAULT_ANGULAR_SPEED = 0.2;
 
@@ -353,6 +354,7 @@ namespace robot_head
             {
                 Debug.WriteLine(ex.Message);
             }
+           
         }
 
         public static void StopCheckingTeleOP()
