@@ -137,12 +137,14 @@ namespace robot_head
             int interval = int.Parse(msg.Split('/')[4]);
 
             interval += Math.Max(0, command.Length / 6 - 8);
+            
+           
 
             int hour, min, sec;
 
             if (startTimeType == "Immediate")
             {
-                
+                if (loopsCount > 2) loopsCount--;
                 Synthesizer.SpeakAsync(command);
                 DateTime now = DateTime.Now;
                 hour = now.Hour;
