@@ -42,7 +42,7 @@
             // 
             this.pictureBox1.Enabled = false;
             this.pictureBox1.Image = global::robot_head.Properties.Resources.robot_face;
-            this.pictureBox1.Location = new System.Drawing.Point(16, 15);
+            this.pictureBox1.Location = new System.Drawing.Point(13, 13);
             this.pictureBox1.Margin = new System.Windows.Forms.Padding(4);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(461, 255);

@@ -12,8 +12,6 @@ namespace robot_head
 {
     public partial class MainForm : Form
     {
-        private static Timer savingTimer = new Timer();
-        private const int ROS_CONNECT_DELAY = 1000 * 2; 
         
         public void InitUI()
         {
@@ -72,7 +70,7 @@ namespace robot_head
             }
 
             ROSHelper.Connect();
-
+            
             if (GlobalData.Covid19ViolationDetectEnabled)
             {
                 while (ROSHelper.ROS_STATUS == "") { }
@@ -83,8 +81,8 @@ namespace robot_head
                 }
                 else
                 {
-                    Synthesizer.Speak("ROS BRIDGE IS NOT READY! PLEASE CHECK AGAIN");
-
+                    Synthesizer.Speak("ROS BRIDGE IS NOT READY! PLEASE CHECK the network");
+                    this.Close();
                 }
 
                 var timeFlag = DateTime.Now;
@@ -107,7 +105,7 @@ namespace robot_head
                     this.Close();
                 }
 
-                Thread.Sleep(1000 * 10);
+                Thread.Sleep(1000 * 2);
                 Synthesizer.SpeakAsync("Safe distancing and face mask " +
                     "detection are ready");
 
@@ -117,18 +115,17 @@ namespace robot_head
                 Synthesizer.SpeakAsync("ROS BRIDGE IS READY");
             }
 
-            Synthesizer.Speak("Everything is ready now!");
+            Synthesizer.Speak("Everything is Ok now!");
 
             if (GlobalData.RovingEnable)
             {
-
                 Roving.Start();
             }
         }
 
         private void MainForm_Load(object sender, EventArgs e)
         {
- 
+            
         }
 
         private void InitSpeech()
@@ -136,23 +133,7 @@ namespace robot_head
             Synthesizer.SelectVoiceByName(GlobalData.Voice2);
         }
 
-        private void InitExcelHelper()
-        {
-            ExcelHelper.CreateTable();
-            savingTimer.Interval = 1000 * 60 * 60;
-            savingTimer.AutoReset = true;
-            savingTimer.Elapsed += SavingTimer_Elapsed;
-            savingTimer.Start();
-        }
-
-        private void SavingTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-        {
-            if (ExcelHelper.table.Rows.Count >= 10)
-            {
-                ExcelHelper.ExportToFile();
-            }
-        }
-
+       
         private void DisplayWebFace()
         {
             RobotFaceBrowser.Load(GlobalData.TELEPRESENCE_URL
@@ -170,15 +151,13 @@ namespace robot_head
         private void MainForm_FormClosing_1(object sender, FormClosingEventArgs e)
         {
             Synthesizer.Speak("The system is closing now");
-            PythonCommunicationHelper.KillPython();
             ROSHelper.CancelNavigation();
-            ROSHelper.Stop();
+            Roving.Stop();
+            PythonCommunicationHelper.KillPython();
+            
             ROSHelper.Disconnect();
 
-            Roving.Stop();
-
             Environment.Exit(0);
-            //Application.Exit();
         }
 
         private void RestartApplication()

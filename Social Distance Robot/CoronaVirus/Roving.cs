@@ -40,7 +40,7 @@ namespace robot_head
                 {
                     if (_isPausing == false
                         && GlobalFlowControl.TelepresenceMode == false)
-                    {
+                    {   
                         if (NavigationIncompleted == false)
                         {
                             curLocationIndex = (curLocationIndex + 1) % (rovingLocations.Length);
