@@ -7,7 +7,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using DarrenLee.Media;
 using Newtonsoft.Json.Linq;
 using SpeechLibrary;
 

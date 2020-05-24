@@ -97,22 +97,6 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AForge, Version=2.2.5.0, Culture=neutral, PublicKeyToken=c1db6ff4eaa06aeb, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>dlls\AForge.dll</HintPath>
-    </Reference>
-    <Reference Include="AForge.Video, Version=2.2.5.0, Culture=neutral, PublicKeyToken=cbfb6e07d173c401, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>dlls\AForge.Video.dll</HintPath>
-    </Reference>
-    <Reference Include="AForge.Video.DirectShow, Version=2.2.5.0, Culture=neutral, PublicKeyToken=61ea4348d43881b7, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>dlls\AForge.Video.DirectShow.dll</HintPath>
-    </Reference>
-    <Reference Include="DarrenLee.Media, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>dlls\DarrenLee.Media.dll</HintPath>
-    </Reference>
     <Reference Include="LiteDB, Version=4.1.4.0, Culture=neutral, PublicKeyToken=4ee40123013c9f27, processorArchitecture=MSIL">
       <HintPath>..\packages\LiteDB.4.1.4\lib\net40\LiteDB.dll</HintPath>
     </Reference>
@@ -216,7 +200,6 @@
     <Compile Include="FollowingPerson\FollowingPerson.cs" />
     <Compile Include="Helper Classes\AudioHelper.cs" />
     <Compile Include="Helper Classes\ROSHelper.cs" />
-    <Compile Include="Helper Classes\CameraHelper.cs" />
     <Compile Include="Helper Classes\DatabaseHelper.cs" />
     <Compile Include="Helper Classes\ExcelHelper.cs" />
     <Compile Include="Helper Classes\FileHelper.cs" />
